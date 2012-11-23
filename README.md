@@ -1,7 +1,7 @@
 html2pdflistener
 ================
 
-FlyingSaucer PDF-generation library - JSF integration
+Integração do FlyingSaucer com o JSF
 
 Objetivo
 --------
