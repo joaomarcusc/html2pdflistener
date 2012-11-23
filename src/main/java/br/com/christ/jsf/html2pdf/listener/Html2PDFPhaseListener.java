@@ -38,7 +38,7 @@ public class Html2PDFPhaseListener implements PhaseListener {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         ExternalContext externalContext = facesContext.getExternalContext();
         Object oldResponse = externalContext.getResponse();
-        String nomeArquivo = "cronograma.pdf";
+        String nomeArquivo = "arquivo.pdf";
         try {
             Application application = facesContext.getApplication();
             ViewHandler viewHandler = application.getViewHandler();
@@ -81,7 +81,7 @@ public class Html2PDFPhaseListener implements PhaseListener {
             request.setAttribute("ja_gerou_pdf", "1");
             if(actionPdf != null && !actionPdf.isEmpty()) {
                 response.setContentType("application/pdf");
-                response.addHeader("Content-Disposition","attachment; filename=cronograma.pdf");
+                response.addHeader("Content-Disposition","attachment; filename="+nomeArquivo);
                 response.getOutputStream().write(bytesPDF);
                 facesContext.responseComplete();
             } else {
