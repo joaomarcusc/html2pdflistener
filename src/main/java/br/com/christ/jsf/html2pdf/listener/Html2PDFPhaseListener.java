@@ -1,8 +1,6 @@
 package br.com.christ.jsf.html2pdf.listener;
 
-import org.w3c.dom.Document;
-import org.w3c.tidy.Tidy;
-import org.xhtmlrenderer.pdf.ITextRenderer;
+import br.com.christ.html2pdf.converter.Html2PDFConverter;
 
 import javax.el.ELContext;
 import javax.el.MethodExpression;
@@ -15,8 +13,8 @@ import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 @SuppressWarnings("serial")
 public class Html2PDFPhaseListener implements PhaseListener {
@@ -53,31 +51,7 @@ public class Html2PDFPhaseListener implements PhaseListener {
             viewHandler.renderView(facesContext, facesContext.getViewRoot());
             String htmlContent = catcher.toString();
             externalContext.setResponse(oldResponse);
-            ByteArrayOutputStream pdfStream = new ByteArrayOutputStream();
-            Document xhtmlContent = null;
-            Tidy tidy = new Tidy();
-            try {
-                tidy.setFixUri(true);
-                tidy.setXHTML(true);
-                tidy.setShowWarnings(false);
-                tidy.setAsciiChars(true);
-                tidy.setNumEntities(true);
-                xhtmlContent = tidy.parseDOM(new ByteArrayInputStream(htmlContent.getBytes()),pdfStream);
-            } catch(Exception e) {
-                e.printStackTrace();
-            }
-            try {
-                ITextRenderer renderer = new ITextRenderer();
-                renderer.setDocument(xhtmlContent, ((HttpServletRequest) request).getRequestURL().toString());
-                renderer.layout();
-                pdfStream.reset();
-                renderer.createPDF(pdfStream);
-
-            } catch (com.itextpdf.text.DocumentException e) {
-                throw new RuntimeException(e);
-            }
-
-            byte[] bytesPDF = pdfStream.toByteArray();
+            byte[] bytesPDF = Html2PDFConverter.convertHtmlToPDF(htmlContent, ((HttpServletRequest) request).getRequestURL().toString());
             request.setAttribute("ja_gerou_pdf", "1");
             if(actionPdf != null && !actionPdf.isEmpty()) {
                 response.setContentType("application/pdf");
@@ -92,7 +66,10 @@ public class Html2PDFPhaseListener implements PhaseListener {
                 facesContext.getApplication().getNavigationHandler().handleNavigation(facesContext, "", outcome);
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            StringWriter stringWriter = new StringWriter();
+            PrintWriter printWriter = new PrintWriter(stringWriter);
+            e.printStackTrace(printWriter);
+            throw new RuntimeException("Error converting the HTML content: "+stringWriter.toString());
         }
     }
 
