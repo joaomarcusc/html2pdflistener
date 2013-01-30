@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>br.com.christ.jsf</groupId>
     <artifactId>html2pdflistener</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 
     <dependencies>
         <dependency>
@@ -35,8 +35,6 @@
             <groupId>net.sf.jtidy</groupId>
             <artifactId>jtidy</artifactId>
             <version>r938</version>
-            <scope>system</scope>
-            <systemPath>${pom.basedir}/lib/jtidy-r938.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.xhtmlrenderer</groupId>

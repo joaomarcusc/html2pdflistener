@@ -18,7 +18,7 @@ Adicione o repositório no seu pom.xml
     <repository>
         <id>html2pdflistener.repo</id>
         <name>html2pdflistener.repo</name>
-        <url>https://github.com/joaomc/html2pdflistener-repo/raw/master</url>
+        <url>https://raw.github.com/joaomc/html2pdflistener-repo/master/repository/</url>
     </repository>
 
 Depois, adicione a dependência no seu pom.xml
@@ -26,7 +26,7 @@ Depois, adicione a dependência no seu pom.xml
     <dependency>
         <groupId>br.com.christ.jsf</groupId>
         <artifactId>html2pdflistener</artifactId>
-        <version>1.0</version>
+        <version>1.1</version>
     </dependency>
 
 Agora, adicione no seu faces-config.xml o listener:
