@@ -53,16 +53,16 @@
  */
 package org.ajax4jsf.org.w3c.tidy;
 
+import org.ajax4jsf.org.w3c.tidy.TidyMessage.Level;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
-import org.ajax4jsf.org.w3c.tidy.TidyMessage.Level;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 
 
@@ -638,7 +638,7 @@ public final class Report
     {
         try
         {
-            res = ResourceBundle.getBundle("org/ajax4jsf/org/w3c/tidy/TidyMessages");
+            res = ResourceBundle.getBundle("TidyMessages");
         }
         catch (MissingResourceException e)
         {
