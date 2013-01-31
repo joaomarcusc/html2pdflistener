@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
 
 @SuppressWarnings("serial")
 public class Html2PDFPhaseListener implements PhaseListener {
@@ -51,19 +52,24 @@ public class Html2PDFPhaseListener implements PhaseListener {
             viewHandler.renderView(facesContext, facesContext.getViewRoot());
             String htmlContent = catcher.toString();
             externalContext.setResponse(oldResponse);
-            byte[] bytesPDF = Html2PDFConverter.convertHtmlToPDF(htmlContent, ((HttpServletRequest) request).getRequestURL().toString());
+            URL url = new URL(request.getRequestURL().toString());
+            URL newUrl = new URL(url.getProtocol(),
+                    url.getHost(),
+                    url.getPort(),
+                    facesContext.getExternalContext().getRequestContextPath() + facesContext.getViewRoot().getViewId());
+            byte[] bytesPDF = Html2PDFConverter.convertHtmlToPDF(htmlContent, newUrl.toString());
             request.setAttribute("ja_gerou_pdf", "1");
             if(actionPdf != null && !actionPdf.isEmpty()) {
-                response.setContentType("application/pdf");
-                response.addHeader("Content-Disposition","attachment; filename="+nomeArquivo);
-                response.getOutputStream().write(bytesPDF);
-                facesContext.responseComplete();
-            } else {
                 MethodExpression methodExpression = application.getExpressionFactory().createMethodExpression(elContext, actionPdf,
                         String.class,
                         new Class[]{byte[].class});
                 String outcome = methodExpression.invoke(elContext, new Object[] { bytesPDF }).toString();
                 facesContext.getApplication().getNavigationHandler().handleNavigation(facesContext, "", outcome);
+            } else {
+                response.setContentType("application/pdf");
+                response.addHeader("Content-Disposition","attachment; filename="+nomeArquivo);
+                response.getOutputStream().write(bytesPDF);
+                facesContext.responseComplete();
             }
         } catch (Exception e) {
             StringWriter stringWriter = new StringWriter();
