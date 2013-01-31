@@ -1,8 +1,8 @@
 package br.com.christ.html2pdf.converter;
 
 import br.com.christ.html2pdf.exception.ConversionException;
+import org.ajax4jsf.org.w3c.tidy.Tidy;
 import org.w3c.dom.Document;
-import org.w3c.tidy.Tidy;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.ByteArrayInputStream;
@@ -22,7 +22,7 @@ public class Html2PDFConverter {
             tidy.setNumEntities(true);
             xhtmlContent = tidy.parseDOM(new ByteArrayInputStream(htmlContent.getBytes()),pdfStream);
         } catch(Exception e) {
-            e.printStackTrace();
+            throw new ConversionException(e);
         }
         try {
             ITextRenderer renderer = new ITextRenderer();
