@@ -1,6 +1,7 @@
 package br.com.christ.html2pdf.converter;
 
 import br.com.christ.html2pdf.exception.ConversionException;
+import br.com.christ.html2pdf.factory.B64ImgReplacedElementFactory;
 import org.ajax4jsf.org.w3c.tidy.Tidy;
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.pdf.ITextRenderer;
@@ -29,6 +30,7 @@ public class Html2PDFConverter {
             renderer.setDocument(xhtmlContent, url);
             renderer.layout();
             pdfStream.reset();
+	        renderer.getSharedContext().setReplacedElementFactory(new B64ImgReplacedElementFactory());
             renderer.createPDF(pdfStream);
 
         } catch (com.itextpdf.text.DocumentException e) {
