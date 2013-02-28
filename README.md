@@ -26,7 +26,7 @@ Depois, adicione a dependência no seu pom.xml
     <dependency>
         <groupId>br.com.christ.jsf</groupId>
         <artifactId>html2pdflistener</artifactId>
-        <version>1.1.12</version>
+        <version>1.1.14</version>
     </dependency>
 
 Agora, adicione no seu faces-config.xml o listener:
@@ -98,6 +98,8 @@ Dessa maneira, a imagem será carregada no listener JSF. Isso é necessário cas
  * Problemas ao carregar arquivos de servidor HTTPS
  * Recursos que estiverem em um local com acesso restrito (login necessário)
 
+A partir da versão 1.1.14, o componente irá precarregar automaticamente as imagens e
+stylesheets se for detectada uma conexão HTTPS.
 
 
 
