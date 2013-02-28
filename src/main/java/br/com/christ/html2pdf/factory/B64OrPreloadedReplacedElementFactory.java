@@ -1,5 +1,6 @@
 package br.com.christ.html2pdf.factory;
 
+import br.com.christ.html2pdf.utils.FacesUtils;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.codec.Base64;
@@ -14,10 +15,7 @@ import org.xhtmlrenderer.pdf.ITextImageElement;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.simple.extend.FormSubmissionListener;
 
-import javax.faces.context.FacesContext;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 
 public class B64OrPreloadedReplacedElementFactory implements ReplacedElementFactory {
@@ -53,20 +51,15 @@ public class B64OrPreloadedReplacedElementFactory implements ReplacedElementFact
 		FSImage fsImage;
 		if(srcAttr.startsWith("preload:")) {
 			String preloadSrc = srcAttr.substring("preload:".length());
-			InputStream stream = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream(preloadSrc);
-			ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-			int nRead;
-			byte[] data = new byte[1024];
-			while ((nRead = stream.read(data, 0, data.length)) != -1) {
-				buffer.write(data, 0, nRead);
-			}
-			buffer.flush();
-			fsImage = new ITextFSImage(Image.getInstance(buffer.toByteArray()));
+			fsImage = new ITextFSImage(Image.getInstance(FacesUtils.getBytesFromResource(preloadSrc)));
 		} else if (srcAttr.startsWith("data:image/")) {
 			String b64encoded = srcAttr.substring(srcAttr.indexOf("base64,") + "base64,".length(), srcAttr.length());
 			byte[] decodedBytes = Base64.decode(b64encoded);
 
 			fsImage = new ITextFSImage(Image.getInstance(decodedBytes));
+		} else if (uac.getBaseURL().toUpperCase().startsWith("HTTPS")) {
+			// Preload images from HTTPS servers to avoid problems with certificates
+			fsImage = new ITextFSImage(Image.getInstance(FacesUtils.getBytesFromReference(srcAttr)));
 		} else {
 			fsImage = uac.getImageResource(srcAttr).getImage();
 		}

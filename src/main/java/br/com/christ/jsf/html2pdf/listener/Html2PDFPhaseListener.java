@@ -72,6 +72,7 @@ public class Html2PDFPhaseListener implements PhaseListener {
                 facesContext.responseComplete();
             }
         } catch (Exception e) {
+	        e.printStackTrace();
             StringWriter stringWriter = new StringWriter();
             PrintWriter printWriter = new PrintWriter(stringWriter);
             e.printStackTrace(printWriter);
