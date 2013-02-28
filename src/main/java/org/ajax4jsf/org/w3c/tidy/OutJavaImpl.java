@@ -66,7 +66,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Output implementation using java writers.
  * @author Fabrizio Giustina
- * @version $Revision: 1.1.2.1 $ ($Author: alexsmirnov $)
+ * @version $Revision: 1.1 $ ($Author: 03106709936 $)
  */
 public class OutJavaImpl implements Out
 {

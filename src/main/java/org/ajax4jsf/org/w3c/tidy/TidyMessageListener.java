@@ -57,7 +57,7 @@ package org.ajax4jsf.org.w3c.tidy;
  * Listener interface for validation errors/warnings and info.
  * @see Tidy#setMessageListener(TidyMessageListener)
  * @author Fabrizio Giustina
- * @version $Revision: 1.1.2.1 $ ($Author: alexsmirnov $)
+ * @version $Revision: 1.1 $ ($Author: 03106709936 $)
  */
 public interface TidyMessageListener
 {

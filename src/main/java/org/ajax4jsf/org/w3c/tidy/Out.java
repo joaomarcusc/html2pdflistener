@@ -60,7 +60,7 @@ import java.io.IOException;
  * @author Dave Raggett <a href="mailto:dsr@w3.org">dsr@w3.org </a>
  * @author Andy Quick <a href="mailto:ac.quick@sympatico.ca">ac.quick@sympatico.ca </a> (translation to Java)
  * @author Fabrizio Giustina
- * @version $Revision: 1.1.2.1 $ ($Author: alexsmirnov $)
+ * @version $Revision: 1.1 $ ($Author: 03106709936 $)
  */
 public interface Out
 {

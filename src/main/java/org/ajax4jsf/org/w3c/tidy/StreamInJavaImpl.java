@@ -64,7 +64,7 @@ import java.io.UnsupportedEncodingException;
 /**
  * StreamIn Implementation using java writers.
  * @author Fabrizio Giustina
- * @version $Revision: 1.1.2.1 $ ($Author: alexsmirnov $)
+ * @version $Revision: 1.1 $ ($Author: 03106709936 $)
  */
 public class StreamInJavaImpl implements StreamIn
 {

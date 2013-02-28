@@ -55,7 +55,7 @@ package org.ajax4jsf.org.w3c.tidy;
 
 /**
  * @author Fabrizio Giustina (translation from c)
- * @version $Revision: 1.1.2.1 $ ($Author: alexsmirnov $)
+ * @version $Revision: 1.1 $ ($Author: 03106709936 $)
  */
 public class ValidUTF8Sequence
 {

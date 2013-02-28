@@ -57,7 +57,7 @@ package org.ajax4jsf.org.w3c.tidy;
  * Anchor/node Linked list.
  * @author hoehrmann
  * @author Fabrizio Giustina
- * @version $Revision: 1.1.2.1 $ ($Author: alexsmirnov $)
+ * @version $Revision: 1.1 $ ($Author: 03106709936 $)
  */
 public class Anchor
 {

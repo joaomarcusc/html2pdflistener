@@ -62,7 +62,7 @@ import java.io.Writer;
 /**
  * Tidy Output factory.
  * @author Fabrizio Giustina
- * @version $Revision: 1.1.2.1 $ ($Author: alexsmirnov $)
+ * @version $Revision: 1.1 $ ($Author: 03106709936 $)
  */
 public final class OutFactory
 {

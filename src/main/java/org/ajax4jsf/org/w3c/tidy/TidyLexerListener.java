@@ -22,8 +22,8 @@
 package org.ajax4jsf.org.w3c.tidy;
 
 /**
- * @author asmirnov@exadel.com (latest modification by $Author: alexsmirnov $)
- * @version $Revision: 1.1.2.1 $ $Date: 2007/01/09 18:56:47 $
+ * @author asmirnov@exadel.com (latest modification by $Author: 03106709936 $)
+ * @version $Revision: 1.1 $ $Date: 2013/02/28 14:58:12 $
  *
  */
 public interface TidyLexerListener extends TidyMessageListener {
