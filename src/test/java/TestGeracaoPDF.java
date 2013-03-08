@@ -38,7 +38,7 @@ public class TestGeracaoPDF {
             stringWriter.write(scanner.nextLine());
         }
         scanner.close();
-        byte[] bytesPDF = Html2PDFConverter.convertHtmlToPDF(stringWriter.toString(),"http://localhost/teste2/confimaAderirRPC.jsf.html");
+        byte[] bytesPDF = Html2PDFConverter.convertHtmlToPDF(stringWriter.toString(),"http://localhost/teste2/confimaAderirRPC.jsf.html",true);
         FileOutputStream fileOutputStream = new FileOutputStream("/tmp/saida.pdf");
         fileOutputStream.write(bytesPDF);
     }

@@ -20,6 +20,8 @@ import java.io.IOException;
 
 public class B64OrPreloadedReplacedElementFactory implements ReplacedElementFactory {
 
+	private boolean preloadAllImages = false;
+
 	public ReplacedElement createReplacedElement(LayoutContext c, BlockBox box, UserAgentCallback uac, int cssWidth, int cssHeight) {
 		Element e = box.getElement();
 		if (e == null) {
@@ -32,9 +34,11 @@ public class B64OrPreloadedReplacedElementFactory implements ReplacedElementFact
 			try {
 				fsImage = buildImage(srcAttribute, uac);
 			} catch (BadElementException e1) {
+				e1.printStackTrace();
 				fsImage = null;
 			} catch (IOException e1) {
 				fsImage = null;
+				e1.printStackTrace();
 			}
 			if (fsImage != null) {
 				if (cssWidth != -1 || cssHeight != -1) {
@@ -57,8 +61,7 @@ public class B64OrPreloadedReplacedElementFactory implements ReplacedElementFact
 			byte[] decodedBytes = Base64.decode(b64encoded);
 
 			fsImage = new ITextFSImage(Image.getInstance(decodedBytes));
-		} else if (uac.getBaseURL().toUpperCase().startsWith("HTTPS")) {
-			// Preload images from HTTPS servers to avoid problems with certificates
+		} else if (preloadAllImages) {
 			fsImage = new ITextFSImage(Image.getInstance(FacesUtils.getBytesFromReference(srcAttr)));
 		} else {
 			fsImage = uac.getImageResource(srcAttr).getImage();
@@ -76,4 +79,11 @@ public class B64OrPreloadedReplacedElementFactory implements ReplacedElementFact
 	public void reset() {
 	}
 
+	public boolean isPreloadAllImages() {
+		return preloadAllImages;
+	}
+
+	public void setPreloadAllImages(boolean preloadAllImages) {
+		this.preloadAllImages = preloadAllImages;
+	}
 }

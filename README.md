@@ -101,5 +101,17 @@ Dessa maneira, a imagem será carregada no listener JSF. Isso é necessário cas
 A partir da versão 1.1.14, o componente irá precarregar automaticamente as imagens e
 stylesheets se for detectada uma conexão HTTPS.
 
+A partir da versão 1.1.16, você pode forçar o pré-carregamento de imagens e CSS passando o
+atributo de request "preload_resources":
+
+    public String gerarRelatorioEmail() {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
+        request.setAttribute("gerar_pdf", "1");
+        request.setAttribute("nome_arquivo_pdf", "relatorio.pdf");
+        request.setAttribute("preload_resources", "1");
+        return "relatorio";
+    }
+
 
 

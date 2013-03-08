@@ -57,7 +57,10 @@ public class Html2PDFPhaseListener implements PhaseListener {
                     url.getHost(),
                     url.getPort(),
                     facesContext.getExternalContext().getRequestContextPath() + facesContext.getViewRoot().getViewId());
-            byte[] bytesPDF = Html2PDFConverter.convertHtmlToPDF(htmlContent, newUrl.toString());
+	        // Force preloading if the server is HTTPS
+	        boolean preloadResources = (request.getAttribute("preload_resources") != null
+			        || url.getProtocol().toLowerCase().equals("https"));
+            byte[] bytesPDF = Html2PDFConverter.convertHtmlToPDF(htmlContent, newUrl.toString(), preloadResources);
             request.setAttribute("ja_gerou_pdf", "1");
             if(actionPdf != null && !actionPdf.isEmpty()) {
                 MethodExpression methodExpression = application.getExpressionFactory().createMethodExpression(elContext, actionPdf,

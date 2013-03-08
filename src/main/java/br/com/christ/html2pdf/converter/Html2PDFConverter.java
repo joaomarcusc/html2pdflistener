@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Html2PDFConverter {
+
 	private static class StyleNode {
 		String source = null;
 		String media = null;
@@ -82,7 +83,7 @@ public class Html2PDFConverter {
 		}
 	}
 
-    public static byte[] convertHtmlToPDF(String htmlContent, String url) throws ConversionException {
+    public static byte[] convertHtmlToPDF(String htmlContent, String url, boolean preloadResources) throws ConversionException {
         ByteArrayOutputStream pdfStream = new ByteArrayOutputStream();
         Document xhtmlContent = null;
         Tidy tidy = new Tidy();
@@ -99,11 +100,12 @@ public class Html2PDFConverter {
         try {
 
 	        ITextRenderer renderer = new ITextRenderer();
-	        renderer.getSharedContext().setReplacedElementFactory(new B64OrPreloadedReplacedElementFactory());
-	        // Preload stylesheets if the URL is HTTPS to avoid problems with certificates
-	        if(url.toUpperCase().startsWith("HTTPS")) {
+	        B64OrPreloadedReplacedElementFactory replacementFactory = new B64OrPreloadedReplacedElementFactory();
+	        renderer.getSharedContext().setReplacedElementFactory(replacementFactory);
+	        if(preloadResources) {
 		        preloadStylesheets(xhtmlContent);
 		        htmlContent = getStringFromDoc(xhtmlContent);
+		        replacementFactory.setPreloadAllImages(true);
 	        }
 	        renderer.setDocument(xhtmlContent, url);
 	        renderer.layout();
