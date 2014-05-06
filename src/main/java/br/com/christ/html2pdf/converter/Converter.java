@@ -23,6 +23,7 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 import br.com.christ.html2pdf.exception.ConversionException;
 import br.com.christ.html2pdf.factory.B64OrPreloadedReplacedElementFactory;
 import br.com.christ.html2pdf.loader.ResourceLoader;
+import com.itextpdf.text.DocumentException;
 
 public class Converter {
 
@@ -84,7 +85,6 @@ public class Converter {
 		}
 	}
 
-
 	public byte[] convertHtmlToPDF(ConverterContext context) throws ConversionException {
 		ByteArrayOutputStream pdfStream = new ByteArrayOutputStream();
 		Document xhtmlContent = null;
@@ -95,13 +95,16 @@ public class Converter {
 			tidy.setShowWarnings(false);
 			tidy.setAsciiChars(true);
 			tidy.setNumEntities(true);
+            tidy.setOutputEncoding(context.getInputEncoding());
+            tidy.setInputEncoding(context.getInputEncoding());
 			xhtmlContent = tidy.parseDOM(new ByteArrayInputStream(context.getHtmlContent().getBytes()), pdfStream);
 		} catch (Exception e) {
 			throw new ConversionException(e);
 		}
 		try {
-
-			ITextRenderer renderer = new ITextRenderer();
+            System.out.println(context.getHtmlContent());
+            System.out.println(getStringFromDoc(xhtmlContent));
+            ITextRenderer renderer = new ITextRenderer();
 			B64OrPreloadedReplacedElementFactory replacementFactory = new B64OrPreloadedReplacedElementFactory();
 			replacementFactory.setResourceLoader(context.getResourceLoader());
 			renderer.getSharedContext().setReplacedElementFactory(replacementFactory);
@@ -119,7 +122,7 @@ public class Converter {
 
 			renderer.createPDF(pdfStream);
 
-		} catch (com.itextpdf.text.DocumentException e) {
+		} catch (DocumentException e) {
 			throw new ConversionException(e);
 		} catch (IOException e) {
 			throw new ConversionException(e);

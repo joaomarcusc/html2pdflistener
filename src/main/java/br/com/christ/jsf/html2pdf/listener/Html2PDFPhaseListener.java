@@ -47,6 +47,10 @@ public class Html2PDFPhaseListener implements PhaseListener {
                 actionPdf = request.getAttribute("action_pdf").toString();
             if(request.getAttribute("nome_arquivo_pdf") != null)
                 nomeArquivo = request.getAttribute("nome_arquivo_pdf").toString();
+            String encoding = facesContext.getExternalContext().getResponseCharacterEncoding();
+            if (request.getAttribute("encoding") != null)
+                encoding = request.getAttribute("encoding").toString();
+
             ResponseCatcher catcher = new ResponseCatcher(response);
             externalContext.setResponse(catcher);
             viewHandler.renderView(facesContext, facesContext.getViewRoot());
@@ -60,7 +64,8 @@ public class Html2PDFPhaseListener implements PhaseListener {
 	        // Force preloading if the server is HTTPS
 	        boolean preloadResources = (request.getAttribute("preload_resources") != null
 			        || url.getProtocol().toLowerCase().equals("https"));
-            byte[] bytesPDF = Html2PDFConverter.convertHtmlToPDF(htmlContent, newUrl.toString(), preloadResources);
+
+            byte[] bytesPDF = Html2PDFConverter.convertHtmlToPDF(htmlContent, newUrl.toString(), encoding, preloadResources);
             request.setAttribute("ja_gerou_pdf", "1");
             if(actionPdf != null && !actionPdf.isEmpty()) {
                 MethodExpression methodExpression = application.getExpressionFactory().createMethodExpression(elContext, actionPdf,

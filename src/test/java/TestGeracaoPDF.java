@@ -32,14 +32,5 @@ public class TestGeracaoPDF {
     }
 
     public static void main(String[] args) throws IOException, ConversionException {
-        Scanner scanner = new Scanner(new File("/var/www/teste2/confirmaAderirRPC.jsf.html"));
-        StringWriter stringWriter = new StringWriter();
-        while(scanner.hasNextLine()) {
-            stringWriter.write(scanner.nextLine());
-        }
-        scanner.close();
-        byte[] bytesPDF = Html2PDFConverter.convertHtmlToPDF(stringWriter.toString(),"http://localhost/teste2/confimaAderirRPC.jsf.html",true);
-        FileOutputStream fileOutputStream = new FileOutputStream("/tmp/saida.pdf");
-        fileOutputStream.write(bytesPDF);
     }
 }

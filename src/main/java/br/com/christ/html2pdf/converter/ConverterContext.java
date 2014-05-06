@@ -14,6 +14,8 @@ public class ConverterContext {
 	private String tidiedHtmlContent;
 	private String url;
 
+    private String inputEncoding;
+
 	public ConverterContext() {
 		this.renderer = new ITextRenderer();
 		this.tidy = new Tidy();
@@ -74,4 +76,12 @@ public class ConverterContext {
 	public void setResourceLoader(ResourceLoader resourceLoader) {
 		this.resourceLoader = resourceLoader;
 	}
+
+    public String getInputEncoding() {
+        return inputEncoding;
+    }
+
+    public void setInputEncoding(String inputEncoding) {
+        this.inputEncoding = inputEncoding;
+    }
 }
