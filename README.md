@@ -26,7 +26,7 @@ Depois, adicione a dependência no seu pom.xml
     <dependency>
         <groupId>br.com.christ.jsf</groupId>
         <artifactId>html2pdflistener</artifactId>
-        <version>1.1.16</version>
+        <version>1.1.17</version>
     </dependency>
 
 Agora, adicione no seu faces-config.xml o listener:
@@ -113,5 +113,21 @@ atributo de request "preload_resources":
         return "relatorio";
     }
 
+
+Problemas de codificação
+------------------------------
+
+A partir da versão 1.1.17, a codificação é passada para o Tidy, evitando problemas de acentuação. 
+
+Caso mesmo assim você tenha problemas de codificação, pode informar manualmente a codificação do
+PDF gerado:
+
+    public String gerarRelatorioEmail() {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
+        request.setAttribute("gerar_pdf", "1");
+        request.setAttribute("encoding", "iso-8859-1");
+        return "relatorio";
+    }
 
 
