@@ -3,6 +3,19 @@ html2pdflistener
 
 Integração do FlyingSaucer com o JSF
 
+AVISO IMPORTANTE
+---------------
+
+Esta integração depende da versão 5 do iText para funcionar adequadamente. Porém,
+o iText, a partir da versão 5, adota uma licença que restringe sua utilização em
+projetos que não sejam licenciados através da licença AGPL. Portanto, se você utiliza
+a versão 5 em um projeto que não seja open-source, na prática, estará quebrando a
+licença do iText 5! Confira o arquivo LICENSE, que contém o texto completo da licença.
+
+Se seu projeto for fechado, você pode fazer um fork deste projeto e mudar o arquivo
+pom.xml para mudar a versão do iText - é o que eu fiz, perdendo um pouco em qualidade
+do PDF gerado, mas, mesmo assim, ainda com uma solução bastante satisfatória.
+
 Objetivo
 --------
 
