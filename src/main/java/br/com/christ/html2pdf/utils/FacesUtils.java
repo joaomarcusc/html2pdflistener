@@ -6,6 +6,8 @@ import javax.faces.application.Resource;
 import javax.faces.application.ResourceHandler;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
+
 import java.io.*;
 
 
@@ -14,9 +16,12 @@ public class FacesUtils {
     final static String resourcePrefix = "/javax.faces.resource";
 
 	public static byte[] getBytesFromReference(String reference) throws IOException {
-		String contextPath = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
-		if(reference.startsWith(contextPath))
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = facesContext.getExternalContext();
+		String contextPath = externalContext.getRequestContextPath();
+		if(reference.startsWith(contextPath)) {
 			reference = reference.substring((contextPath.length()));
+        }
 		return FacesUtils.getBytesFromResource(reference);
 	}
 
