@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Locale;
 
 public class ResponseCatcher implements HttpServletResponse {
@@ -125,6 +126,27 @@ public class ResponseCatcher implements HttpServletResponse {
     /* null ops */
     public void setStatus(int arg0) {}
     public void setStatus(int arg0, String arg1) {}
+
+    @Override
+    public int getStatus() {
+        return 0;
+    }
+
+    @Override
+    public String getHeader(String s) {
+        return null;
+    }
+
+    @Override
+    public Collection<String> getHeaders(String s) {
+        return null;
+    }
+
+    @Override
+    public Collection<String> getHeaderNames() {
+        return null;
+    }
+
     public void setBufferSize(int arg0) {}
     public void resetBuffer() {}
     public void reset() {}

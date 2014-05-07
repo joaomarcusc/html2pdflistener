@@ -45,14 +45,14 @@ public class Converter {
 			if (hrefNode != null) {
 
 				StyleNode styleNode = new StyleNode();
-				String styleSource = loader.getStringFromReference(hrefNode.getNodeValue());
-				styleNode.source = styleSource;
+                styleNode.source = loader.getStringFromReference(hrefNode.getNodeValue());
 				if (node.getAttributes().getNamedItem("media") != null)
 					styleNode.media = node.getAttributes().getNamedItem("media").getNodeValue();
 				styleSheets.add(styleNode);
 			}
 			itemsToRemove.add(node);
-			hrefNode.setNodeValue("");
+            assert hrefNode != null;
+            hrefNode.setNodeValue("");
 		}
 		for (Node node : itemsToRemove) {
 			head.removeChild(node);
@@ -66,22 +66,6 @@ public class Converter {
 			}
 			styleElement.appendChild(document.createTextNode(styleNode.source));
 			head.appendChild(styleElement);
-		}
-	}
-
-	private static String getStringFromDoc(org.w3c.dom.Document doc) {
-		try {
-			DOMSource domSource = new DOMSource(doc);
-			StringWriter writer = new StringWriter();
-			StreamResult result = new StreamResult(writer);
-			TransformerFactory tf = TransformerFactory.newInstance();
-			Transformer transformer = tf.newTransformer();
-			transformer.transform(domSource, result);
-			writer.flush();
-			return writer.toString();
-		} catch (TransformerException ex) {
-			ex.printStackTrace();
-			return null;
 		}
 	}
 
@@ -108,7 +92,6 @@ public class Converter {
 			renderer.getSharedContext().setReplacedElementFactory(replacementFactory);
 			if (context.isPreloadResources()) {
 				preloadStylesheets(context.getResourceLoader(), xhtmlContent);
-				context.setTidiedHtmlContent(getStringFromDoc(xhtmlContent));
 				replacementFactory.setPreloadAllImages(true);
 			}
 			renderer.setDocument(xhtmlContent, context.getUrl());
@@ -129,8 +112,7 @@ public class Converter {
 			listener.afterConvert(context);
 		}
 
-		byte[] bytesPDF = pdfStream.toByteArray();
-		return bytesPDF;
+        return pdfStream.toByteArray();
 	}
 
 	public void addListener(ConversionListener listener) {

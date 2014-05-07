@@ -33,7 +33,7 @@ Depois, adicione a dependência no seu pom.xml
     <dependency>
         <groupId>br.com.christ.jsf</groupId>
         <artifactId>html2pdflistener</artifactId>
-        <version>1.2.1</version>
+        <version>1.2.4</version>
     </dependency>
 
 Agora, adicione no seu faces-config.xml o listener:
@@ -45,12 +45,24 @@ Agora, adicione no seu faces-config.xml o listener:
 Mostrando um PDF diretamente ao usuário
 -------
 
-Caso você queira que uma página específica seja mostrada ao usuário, adicione
-as seguintes linhas na sua action, pouco antes do "return":
+Caso você queira que uma página específica seja mostrada ao usuário, primeiro,
+faça o @Inject de um objeto PDFConverterConfig na sua classe:
 
+    @Inject
+    private PDFConverterConfig pdfConverterConfig;
+
+Depois, adicione a seguinte linha pouco antes do return da action:
+
+    pdfConverterConfig.setEnablePdf(true);
+
+Por exemplo:
+
+    public String gerarRelatorio() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
-        request.setAttribute("gerar_pdf", "1");
+        pdfConverterConfig.setEnablePdf(true);
+        return "relatorio";
+    }
 
 No exemplo abaixo, a página resultante do retorno da action será transformada em PDF
 e mostrada ao usuário como um arquivo com nome "relatorio.pdf":
@@ -58,8 +70,8 @@ e mostrada ao usuário como um arquivo com nome "relatorio.pdf":
     public String gerarRelatorio() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
-        request.setAttribute("gerar_pdf", "1");
-        request.setAttribute("nome_arquivo_pdf", "relatorio.pdf");
+        pdfConverterConfig.setEnablePdf(true);
+        pdfConverter.setFileName("relatorio.pdf");
         return "relatorio";
     }
 
@@ -73,9 +85,9 @@ para uma segunda action:
     public String gerarRelatorioEmail() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
-        request.setAttribute("gerar_pdf", "1");
-        request.setAttribute("nome_arquivo_pdf", "relatorio.pdf");
-        request.setAttribute("action_pdf", "#{meuRelatorioMB.enviarEmailRelatorio}");
+        pdfConverterConfig.setEnablePdf(true);
+        pdfConverter.setFileName("relatorio.pdf");
+        pdfConverter.setPdfAction("#{meuRelatorioMB.enviarEmailRelatorio}");
         return "relatorio";
     }
 
@@ -114,9 +126,9 @@ atributo de request "preload_resources":
     public String gerarRelatorioEmail() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
-        request.setAttribute("gerar_pdf", "1");
-        request.setAttribute("nome_arquivo_pdf", "relatorio.pdf");
-        request.setAttribute("preload_resources", "1");
+        pdfConverterConfig.setEnablePdf(true);
+        pdfConverter.setFileName("relatorio.pdf");
+        pdfConverter.setPreloadResources(true);
         return "relatorio";
     }
 
@@ -132,9 +144,18 @@ PDF gerado:
     public String gerarRelatorioEmail() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
-        request.setAttribute("gerar_pdf", "1");
-        request.setAttribute("encoding", "iso-8859-1");
+        pdfConverterConfig.setEnablePdf(true);
+        pdfConverter.setEncoding("iso-8859-1");
         return "relatorio";
     }
+
+Configurando a geração de PDF
+------------------------------
+
+A partir da versão 1.2.4, a configuração da conversão de PDF utiliza a injeção
+de dependência do JavaEE. Se você quiser criar uma classe diferente para
+configurar a geração de PDF, basta criar uma nova classe implementando a
+interface PDFConverterConfig e especificar no beans.xml que você utilizará
+essa classe.
 
 

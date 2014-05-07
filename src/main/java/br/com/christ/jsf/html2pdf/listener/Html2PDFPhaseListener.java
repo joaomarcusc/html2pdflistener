@@ -1,10 +1,11 @@
 package br.com.christ.jsf.html2pdf.listener;
 
+import br.com.christ.cdi.CDIUtil;
 import br.com.christ.html2pdf.converter.Html2PDFConverter;
-import com.sun.deploy.net.HttpRequest;
 
 import javax.el.ELContext;
 import javax.el.MethodExpression;
+import javax.enterprise.context.ApplicationScoped;
 import javax.faces.application.Application;
 import javax.faces.application.ViewHandler;
 import javax.faces.context.ExternalContext;
@@ -12,6 +13,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
@@ -19,20 +21,26 @@ import java.io.StringWriter;
 import java.net.URL;
 
 @SuppressWarnings("serial")
+@ApplicationScoped
 public class Html2PDFPhaseListener implements PhaseListener {
+
+    @Inject
+    PDFConverterConfig config;
 
     public void afterPhase(PhaseEvent event) {
     }
 
     public void beforePhase(PhaseEvent event) {
+        PDFConverterConfig config = CDIUtil.getBean(PDFConverterConfig.class);
         HttpServletRequest request = ((HttpServletRequest)event.getFacesContext().getExternalContext().getRequest());
         HttpServletResponse response = ((HttpServletResponse)event.getFacesContext().getExternalContext().getResponse());
-        if("1".equals(request.getAttribute("gerar_pdf")) && request.getAttribute("ja_gerou_pdf") == null) {
+        if(config.isEnablePdf()) {
             gerarPDF(event);
         }
     }
 
     private void gerarPDF(PhaseEvent event) {
+        PDFConverterConfig config = CDIUtil.getBean(PDFConverterConfig.class);
         HttpServletRequest request = ((HttpServletRequest)event.getFacesContext().getExternalContext().getRequest());
         HttpServletResponse response = ((HttpServletResponse)event.getFacesContext().getExternalContext().getResponse());
         FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -44,13 +52,13 @@ public class Html2PDFPhaseListener implements PhaseListener {
             ViewHandler viewHandler = application.getViewHandler();
             ELContext elContext = facesContext.getELContext();
             String actionPdf = null;
-            if(request.getAttribute("action_pdf") != null)
-                actionPdf = request.getAttribute("action_pdf").toString();
-            if(request.getAttribute("nome_arquivo_pdf") != null)
-                nomeArquivo = request.getAttribute("nome_arquivo_pdf").toString();
+            if(config.getPdfAction() != null)
+                actionPdf = config.getPdfAction();
+            if(config.getFileName() != null)
+                nomeArquivo = config.getFileName();
             String encoding = ((HttpServletRequest)facesContext.getExternalContext().getRequest()).getCharacterEncoding();
-            if (request.getAttribute("encoding") != null)
-                encoding = request.getAttribute("encoding").toString();
+            if (config.getEncoding() != null)
+                encoding = config.getEncoding();
 
             ResponseCatcher catcher = new ResponseCatcher(response);
             externalContext.setResponse(catcher);
@@ -63,11 +71,11 @@ public class Html2PDFPhaseListener implements PhaseListener {
                     url.getPort(),
                     facesContext.getExternalContext().getRequestContextPath() + facesContext.getViewRoot().getViewId());
 	        // Force preloading if the server is HTTPS
-	        boolean preloadResources = (request.getAttribute("preload_resources") != null
-			        || url.getProtocol().toLowerCase().equals("https"));
+	        boolean preloadResources = config.isPreloadResources()
+			        || url.getProtocol().toLowerCase().equals("https");
 
             byte[] bytesPDF = Html2PDFConverter.convertHtmlToPDF(htmlContent, newUrl.toString(), encoding, preloadResources);
-            request.setAttribute("ja_gerou_pdf", "1");
+            config.setEnablePdf(false);
             if(actionPdf != null && !actionPdf.isEmpty()) {
                 MethodExpression methodExpression = application.getExpressionFactory().createMethodExpression(elContext, actionPdf,
                         String.class,
