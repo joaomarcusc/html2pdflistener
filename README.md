@@ -71,7 +71,7 @@ e mostrada ao usuário como um arquivo com nome "relatorio.pdf":
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
         pdfConverterConfig.setEnablePdf(true);
-        pdfConverter.setFileName("relatorio.pdf");
+        pdfConverterConfig.setFileName("relatorio.pdf");
         return "relatorio";
     }
 
@@ -86,8 +86,8 @@ para uma segunda action:
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
         pdfConverterConfig.setEnablePdf(true);
-        pdfConverter.setFileName("relatorio.pdf");
-        pdfConverter.setPdfAction("#{meuRelatorioMB.enviarEmailRelatorio}");
+        pdfConverterConfig.setFileName("relatorio.pdf");
+        pdfConverterConfig.setPdfAction("#{meuRelatorioMB.enviarEmailRelatorio}");
         return "relatorio";
     }
 
@@ -127,8 +127,8 @@ atributo de request "preload_resources":
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
         pdfConverterConfig.setEnablePdf(true);
-        pdfConverter.setFileName("relatorio.pdf");
-        pdfConverter.setPreloadResources(true);
+        pdfConverterConfig.setFileName("relatorio.pdf");
+        pdfConverterConfig.setPreloadResources(true);
         return "relatorio";
     }
 
@@ -145,7 +145,7 @@ PDF gerado:
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
         pdfConverterConfig.setEnablePdf(true);
-        pdfConverter.setEncoding("iso-8859-1");
+        pdfConverterConfig.setEncoding("iso-8859-1");
         return "relatorio";
     }
 
