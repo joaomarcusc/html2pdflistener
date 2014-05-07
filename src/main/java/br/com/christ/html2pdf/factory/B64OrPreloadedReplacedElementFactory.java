@@ -15,9 +15,9 @@ import org.xhtmlrenderer.simple.extend.FormSubmissionListener;
 
 import br.com.christ.html2pdf.loader.FacesResourceLoader;
 import br.com.christ.html2pdf.loader.ResourceLoader;
-import com.itextpdf.text.BadElementException;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.pdf.codec.Base64;
+import com.lowagie.text.BadElementException;
+import com.lowagie.text.Image;
+import com.lowagie.text.pdf.codec.Base64;
 
 
 public class B64OrPreloadedReplacedElementFactory implements ReplacedElementFactory {

@@ -1,6 +1,7 @@
 package br.com.christ.jsf.html2pdf.listener;
 
 import br.com.christ.html2pdf.converter.Html2PDFConverter;
+import com.sun.deploy.net.HttpRequest;
 
 import javax.el.ELContext;
 import javax.el.MethodExpression;
@@ -47,7 +48,7 @@ public class Html2PDFPhaseListener implements PhaseListener {
                 actionPdf = request.getAttribute("action_pdf").toString();
             if(request.getAttribute("nome_arquivo_pdf") != null)
                 nomeArquivo = request.getAttribute("nome_arquivo_pdf").toString();
-            String encoding = facesContext.getExternalContext().getResponseCharacterEncoding();
+            String encoding = ((HttpServletRequest)facesContext.getExternalContext().getRequest()).getCharacterEncoding();
             if (request.getAttribute("encoding") != null)
                 encoding = request.getAttribute("encoding").toString();
 

@@ -23,7 +23,7 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 import br.com.christ.html2pdf.exception.ConversionException;
 import br.com.christ.html2pdf.factory.B64OrPreloadedReplacedElementFactory;
 import br.com.christ.html2pdf.loader.ResourceLoader;
-import com.itextpdf.text.DocumentException;
+import com.lowagie.text.DocumentException;
 
 public class Converter {
 
@@ -102,8 +102,6 @@ public class Converter {
 			throw new ConversionException(e);
 		}
 		try {
-            System.out.println(context.getHtmlContent());
-            System.out.println(getStringFromDoc(xhtmlContent));
             ITextRenderer renderer = new ITextRenderer();
 			B64OrPreloadedReplacedElementFactory replacementFactory = new B64OrPreloadedReplacedElementFactory();
 			replacementFactory.setResourceLoader(context.getResourceLoader());
@@ -122,12 +120,12 @@ public class Converter {
 
 			renderer.createPDF(pdfStream);
 
-		} catch (DocumentException e) {
-			throw new ConversionException(e);
 		} catch (IOException e) {
 			throw new ConversionException(e);
-		}
-		for (ConversionListener listener : listeners) {
+		} catch (DocumentException e) {
+            throw new ConversionException(e);
+        }
+        for (ConversionListener listener : listeners) {
 			listener.afterConvert(context);
 		}
 
