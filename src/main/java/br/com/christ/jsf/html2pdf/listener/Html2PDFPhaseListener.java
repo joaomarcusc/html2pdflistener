@@ -2,6 +2,7 @@ package br.com.christ.jsf.html2pdf.listener;
 
 import br.com.christ.cdi.CDIUtil;
 import br.com.christ.html2pdf.converter.Html2PDFConverter;
+import br.com.christ.html2pdf.loader.FacesResourceLoader;
 
 import javax.el.ELContext;
 import javax.el.MethodExpression;
@@ -74,7 +75,8 @@ public class Html2PDFPhaseListener implements PhaseListener {
 	        boolean preloadResources = config.isPreloadResources()
 			        || url.getProtocol().toLowerCase().equals("https");
 
-            byte[] bytesPDF = Html2PDFConverter.convertHtmlToPDF(htmlContent, newUrl.toString(), encoding, preloadResources);
+            byte[] bytesPDF = Html2PDFConverter.convertHtmlToPDF(htmlContent, newUrl.toString(),
+                    encoding, preloadResources, new FacesResourceLoader());
             config.setEnablePdf(false);
             if(actionPdf != null && !actionPdf.isEmpty()) {
                 MethodExpression methodExpression = application.getExpressionFactory().createMethodExpression(elContext, actionPdf,
