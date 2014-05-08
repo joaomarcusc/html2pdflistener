@@ -1,0 +1,3 @@
+1.2.6: 2014-05-08
+* Passar o Resource Loader ao método utilitário do Html2PDFConverter, separando o método utilitário do uso de JSF.
+* Remover classes Java do Tidy, incluindo uma versão funcional encontrada em repositórios Maven

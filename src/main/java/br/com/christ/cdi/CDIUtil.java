@@ -9,6 +9,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 public class CDIUtil {
+    @SuppressWarnings("unchecked")
     public static <T> T getBean(Class<T> klass) {
         BeanManager beanManager;
         try {
