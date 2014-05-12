@@ -9,13 +9,16 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.*;
+import java.util.logging.Logger;
 
 
 public class FacesUtils {
 
     final static String resourcePrefix = "/javax.faces.resource";
 
-	public static byte[] getBytesFromReference(String reference) throws IOException {
+    private Logger logger =java.util.logging.Logger.getLogger(FacesUtils.class.getName());
+
+    public static byte[] getBytesFromReference(String reference) throws IOException {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         ExternalContext externalContext = facesContext.getExternalContext();
 		String contextPath = externalContext.getRequestContextPath();
@@ -74,12 +77,19 @@ public class FacesUtils {
                 libraryName = libraryName.substring(0, libraryName.indexOf("&"));
             }
         }
+        if (resourceName.endsWith(".jsf"))
+            resourceName = resourceName.substring(0, resourceName.lastIndexOf("."));
+        Resource resource;
         if (libraryName != null) {
-            return resourceHandler.createResource(resourceName, libraryName).getInputStream();
+            resource = resourceHandler.createResource(resourceName, libraryName);
         } else {
-            return resourceHandler.createResource(resourceName).getInputStream();
+            resource = resourceHandler.createResource(resourceName);
         }
-
+        if(resource == null) {
+            Logger.getLogger(FacesUtils.class.getName()).warning("Could not fetch resource "+resourceName+ "!");
+            return null;
+        }
+        return resource.getInputStream();
     }
 
 	public static String getStringFromResource(String resourcePath) throws IOException {
