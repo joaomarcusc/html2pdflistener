@@ -168,11 +168,8 @@ essa classe.
 * Verifique se você não está usando AJAX - a geração de PDF através de AJAX
 não funciona.
 * Tome cuidado com as seguintes propriedades CSS, elas podem causar problemas!
-** float
-** position: fixed
-Essas duas propriedades afetam a forma como o FlyingSaucer calcula as dimensões
-das propriedades. Se você parar para pensar, "position:fixed" não faz sentido
-em um PDF, e "float" é algo dificílimo de calcular em muitas situações.
+  * float
+  * position: fixed
 
 ### O PDF demora demais para ser gerado!
 
