@@ -230,4 +230,35 @@ Segue um exemplo:
 Veja o exemplo acima!
 
 
-###
+### Eu fiz isso, mas os cabeçalhos e rodapés não aparecem em todas as páginas!
+
+Os elementos utilizados como cabeçalho e/ou rodapé devem estar logo no começo da página,
+logo depois da tag "body". Por exemplo, isso não funciona:
+
+    <body>
+        <div class="header">
+            Meu cabeçalho
+        </div>
+        <!-- Conteúdo da página -->
+        teste
+        <div class="footer">
+            Meu rodapé
+        </div>
+    </body>
+    
+Mas isso funciona:
+
+    <body>
+        <div class="header">
+            Meu cabeçalho
+        </div>
+        <div class="footer">
+            Meu rodapé
+        </div>
+        <!-- Conteúdo da página -->
+        teste
+    </body>
+    
+    
+Não se preocupe, o posicionamento dos cabeçalhos e rodapés é definido por CSS, 
+então não há problemas em se colocar o elemento rodapé no começo da página!
