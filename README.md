@@ -2,7 +2,6 @@
 
 Integração do FlyingSaucer com o JSF
 
-{:toc}
 
 ## AVISO IMPORTANTE
 
