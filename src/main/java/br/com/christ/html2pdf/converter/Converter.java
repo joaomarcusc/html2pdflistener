@@ -61,39 +61,45 @@ public class Converter {
 	}
 
     private boolean mustPreserveNode(Node node) {
-        Node preserveNode = node.getAttributes().getNamedItem("data-pdf-preserve");
-        if (preserveNode != null) {
-            String preserveVal = preserveNode.getNodeValue();
-            if ("true".equalsIgnoreCase(preserveVal)
-                    || "1".equalsIgnoreCase(preserveVal)) {
-                return true;
-            }
-        }
-        return false;
+        Element elem = (Element)node;
+        String preserveVal = elem.getAttribute("data-pdf-preserve");
+        String mediaVal = elem.getAttribute("media");
+        if(mediaVal == null)
+            mediaVal = "";
+        return mediaVal.contains("pdf") ||
+                "true".equalsIgnoreCase(preserveVal) ||
+                "1".equalsIgnoreCase(preserveVal);
     }
 
     private void removeStylesheets(Document document) {
         NodeList nodes = document.getElementsByTagName("link");
-        List<StyleNode> styleSheets = new ArrayList<StyleNode>();
-        List<Node> itemsToRemove = new ArrayList<Node>();
-        Node head = document.getElementsByTagName("head").item(0);
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
             Node relNode = node.getAttributes().getNamedItem("rel");
-            if (relNode != null && relNode.getNodeValue().equalsIgnoreCase("stylesheet")
-                    && !mustPreserveNode(node)) {
-                itemsToRemove.add(node);
+            if (relNode != null && relNode.getNodeValue().equalsIgnoreCase("stylesheet")) {
+                ((Element)node).setAttribute("href","");
+            } else {
+                fixPdfMedia(node);
             }
-        }
-        for (Node node : itemsToRemove) {
-            head.removeChild(node);
         }
         nodes = document.getElementsByTagName("style");
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
             if(!mustPreserveNode(node))
                 node.setNodeValue("");
+            else
+                fixPdfMedia(node);
         }
+    }
+
+    private void fixPdfMedia(Node node) {
+        Element elem =  ((Element)node);
+        String mediaVal = elem.getAttribute("media");
+        if(mediaVal == null)
+            mediaVal = "print";
+        if(!mediaVal.contains("print"))
+            mediaVal = mediaVal+",print";
+        elem.setAttribute("media", mediaVal);
     }
 
 	public byte[] convertHtmlToPDF(ConverterContext context) throws ConversionException {

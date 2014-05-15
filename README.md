@@ -30,7 +30,7 @@ Depois, adicione a dependência no seu pom.xml
     <dependency>
         <groupId>br.com.christ.jsf</groupId>
         <artifactId>html2pdflistener</artifactId>
-        <version>1.3.0</version>
+        <version>1.3.1</version>
     </dependency>
 
 Agora, adicione no seu faces-config.xml o listener:
@@ -297,7 +297,8 @@ Há uma implementação de listener específica para gerar/remover cookies:
 Sim, o FlyingSaucer utiliza os estilos com media="print", ou seja, você normalmente
 pode criar um estilo específico para impressão, e este será também usado para a geração de PDF.
 Caso isso não seja satisfatório, pode configurar a remoção automática de todos os
- estilos CSS de tags que não contenham o atributo "data-pdf-preserve" igual a "true":
+ estilos CSS de tags que não contenham o atributo "data-pdf-preserve" igual a "true"
+ e que não tenham "pdf" no atributo "media"
 
 
     pdfConfig.setRemoveStyles(true);
@@ -308,10 +309,13 @@ Dessa maneira, os estilos abaixo não serão carregados:
     <style type="text/css">
         // alguns estilos
     </style>
+    <style type="text/css" media="print">
+        // alguns estilos
+    </style>
 
-O estilo abaixo seria carregado na geração do PDF:
+Os estilos abaixo seriam carregados na geração do PDF:
 
     <style type="text/css" data-pdf-preserve="true">
         // alguns estilos
     </style>
-
+    <link rel="stylesheet" href="meucss.css" media="pdf" />

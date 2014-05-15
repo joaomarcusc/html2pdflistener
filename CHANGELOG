@@ -1,3 +1,6 @@
+1.3.1: 2014-05-15
+* Permitir que a peservação de PDFs seja também configurada através do tipo de media "pdf"
+  passado para links e styles.
 1.3.0: 2014-05-15
 * Permitir a execução de código antes ou depois de gerar o PDF, para permitir que, por exemplo,
   seja setado ou apagado um cookie ao finalizar a geração.
