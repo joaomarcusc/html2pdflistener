@@ -2,8 +2,6 @@
 
 Integração do FlyingSaucer com o JSF
 
-{:toc}
-
 ## AVISO IMPORTANTE
 
 A partir da versão 1.2.0, esta biblioteca passou a utilizar o iText 4.1, que ainda
@@ -31,7 +29,7 @@ Depois, adicione a dependência no seu pom.xml
     <dependency>
         <groupId>br.com.christ.jsf</groupId>
         <artifactId>html2pdflistener</artifactId>
-        <version>1.2.7</version>
+        <version>1.3.0</version>
     </dependency>
 
 Agora, adicione no seu faces-config.xml o listener:
@@ -134,7 +132,6 @@ atributo de request "preload_resources":
         return "relatorio";
     }
 
-
 ## Problemas de codificação
 
 A partir da versão 1.1.17, a codificação é passada para o Tidy, evitando problemas de acentuação. 
@@ -233,5 +230,54 @@ Segue um exemplo:
 
 Veja o exemplo acima!
 
+### Como eu executo algum código antes ou depois de gerado o PDF?
 
-###
+A classe PDFConverterConfig permite que você execute trechos de código antes ou depois
+da conversão, através do uso de listeners:
+
+    pdfConfig.setListeners(new ConversionListener() {
+        @Override
+        public boolean beforeConvert(ConverterContext context) throws IOException {
+            System.out.println(facesContext.getViewRoot().getViewId());
+            return true;
+        }
+
+        @Override
+        public boolean afterConvert(ConverterContext context) {
+            return true;
+        }
+
+        @Override
+        public boolean afterResponseComplete(ConverterContext context) {
+            return true;
+        }
+    });
+
+Há uma implementação de listener específica para gerar/remover cookies:
+
+    pdfConfig.setListeners(CookieOperations.doDelete("relnovo"),
+                           CookieOperations.doAdd("crieiRelatorio","1"));
+
+### Eu posso usar CSS específico para a geração do PDF?
+
+Sim, o FlyingSaucer utiliza os estilos com media="print", ou seja, você normalmente
+pode criar um estilo específico para impressão, e este será também usado para a geração de PDF.
+Caso isso não seja satisfatório, pode configurar a remoção automática de todos os
+ estilos CSS de tags que não contenham o atributo "data-pdf-preserve" igual a "true":
+
+
+    pdfConfig.setRemoveStyles(true);
+
+Dessa maneira, os estilos abaixo não serão carregados:
+
+    <link rel="stylesheet" href="meucss.css" />
+    <style type="text/css">
+        // alguns estilos
+    </style>
+
+O estilo abaixo seria carregado na geração do PDF:
+
+    <style type="text/css" data-pdf-preserve="true">
+        // alguns estilos
+    </style>
+

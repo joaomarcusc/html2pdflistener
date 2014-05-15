@@ -1,8 +1,17 @@
 package br.com.christ.jsf.html2pdf.listener;
 
 import java.io.Serializable;
+import java.util.List;
+
+import br.com.christ.html2pdf.converter.ConversionListener;
 
 public interface PDFConverterConfig extends Serializable {
+    public List<? extends ConversionListener> getListeners();
+
+    public void setListeners(List<? extends ConversionListener> listeners);
+
+    public void setListeners(ConversionListener... listeners);
+
 	public void setPreloadResources(boolean preload);
 
 	public boolean isPreloadResources();
@@ -23,5 +32,7 @@ public interface PDFConverterConfig extends Serializable {
 
 	public String getEncoding();
 
-	public void onPdfFinish();
+    public boolean isRemoveStyles();
+
+    public void setRemoveStyles(boolean removeAllStyles);
 }

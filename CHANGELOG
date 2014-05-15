@@ -1,3 +1,10 @@
+1.3.0: 2014-05-15
+* Permitir a execução de código antes ou depois de gerar o PDF, para permitir que, por exemplo,
+  seja setado ou apagado um cookie ao finalizar a geração.
+* Adicionada funcionalidade para remover estilos da página ao gerar o PDF, deixando somente
+  os que têm data-pdf-preserve definido nos atributos.
+1.2.7: 2014-05-10
+* Evitar NullPointerException ao tentar carregar resources que não são encontrados
 1.2.6: 2014-05-08
 * Passar o Resource Loader ao método utilitário do Html2PDFConverter, separando o método utilitário do uso de JSF.
 * Remover classes Java do Tidy, incluindo uma versão funcional encontrada em repositórios Maven

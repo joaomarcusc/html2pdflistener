@@ -20,8 +20,6 @@ import com.lowagie.text.DocumentException;
 
 public class Converter {
 
-	private List<ConversionListener> listeners = new ArrayList<ConversionListener>();
-
 	private static class StyleNode {
 		String source = null;
 		String media = null;
@@ -62,8 +60,47 @@ public class Converter {
 		}
 	}
 
+    private boolean mustPreserveNode(Node node) {
+        Node preserveNode = node.getAttributes().getNamedItem("data-pdf-preserve");
+        if (preserveNode != null) {
+            String preserveVal = preserveNode.getNodeValue();
+            if ("true".equalsIgnoreCase(preserveVal)
+                    || "1".equalsIgnoreCase(preserveVal)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void removeStylesheets(Document document) {
+        NodeList nodes = document.getElementsByTagName("link");
+        List<StyleNode> styleSheets = new ArrayList<StyleNode>();
+        List<Node> itemsToRemove = new ArrayList<Node>();
+        Node head = document.getElementsByTagName("head").item(0);
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node node = nodes.item(i);
+            Node relNode = node.getAttributes().getNamedItem("rel");
+            if (relNode != null && relNode.getNodeValue().equalsIgnoreCase("stylesheet")
+                    && !mustPreserveNode(node)) {
+                itemsToRemove.add(node);
+            }
+        }
+        for (Node node : itemsToRemove) {
+            head.removeChild(node);
+        }
+        nodes = document.getElementsByTagName("style");
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node node = nodes.item(i);
+            if(!mustPreserveNode(node))
+                node.setNodeValue("");
+        }
+    }
+
 	public byte[] convertHtmlToPDF(ConverterContext context) throws ConversionException {
 		ByteArrayOutputStream pdfStream = new ByteArrayOutputStream();
+        List<? extends ConversionListener> listeners = context.getListeners();
+        if(listeners == null)
+            listeners = new ArrayList<ConversionListener>();
 		Document xhtmlContent = null;
 		Tidy tidy = new Tidy();
 		try {
@@ -83,7 +120,9 @@ public class Converter {
 			B64OrPreloadedReplacedElementFactory replacementFactory = new B64OrPreloadedReplacedElementFactory();
 			replacementFactory.setResourceLoader(context.getResourceLoader());
 			renderer.getSharedContext().setReplacedElementFactory(replacementFactory);
-			if (context.isPreloadResources()) {
+            if (context.isRemoveStyles())
+                removeStylesheets(xhtmlContent);
+            if (context.isPreloadResources()) {
 				preloadStylesheets(context.getResourceLoader(), xhtmlContent);
 				replacementFactory.setPreloadAllImages(true);
 			}
@@ -108,7 +147,4 @@ public class Converter {
         return pdfStream.toByteArray();
 	}
 
-	public void addListener(ConversionListener listener) {
-		this.listeners.add(listener);
-	}
 }

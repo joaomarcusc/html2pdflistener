@@ -1,6 +1,9 @@
 package br.com.christ.jsf.html2pdf.listener;
 
 import br.com.christ.cdi.CDIUtil;
+import br.com.christ.html2pdf.converter.ConversionListener;
+import br.com.christ.html2pdf.converter.Converter;
+import br.com.christ.html2pdf.converter.ConverterContext;
 import br.com.christ.html2pdf.converter.Html2PDFConverter;
 import br.com.christ.html2pdf.loader.FacesResourceLoader;
 
@@ -20,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
+import java.util.List;
 
 @SuppressWarnings("serial")
 @ApplicationScoped
@@ -75,9 +79,24 @@ public class Html2PDFPhaseListener implements PhaseListener {
 	        boolean preloadResources = config.isPreloadResources()
 			        || url.getProtocol().toLowerCase().equals("https");
 
-            byte[] bytesPDF = Html2PDFConverter.convertHtmlToPDF(htmlContent, newUrl.toString(),
-                    encoding, preloadResources, new FacesResourceLoader());
+            ConverterContext context = new ConverterContext();
+            context.setListeners(config.getListeners());
+            context.setHtmlContent(htmlContent);
+            context.setUrl(newUrl.toString());
+            context.setPreloadResources(preloadResources);
+            context.setResourceLoader(new FacesResourceLoader());
+            context.setInputEncoding(encoding);
+            context.setRemoveStyles(config.isRemoveStyles());
+            Converter converter = new Converter();
+            converter.convertHtmlToPDF(context);
+            byte[] bytesPDF = Html2PDFConverter.convertHtmlToPDF(context);
             config.setEnablePdf(false);
+            List<? extends ConversionListener> listeners = config.getListeners();
+            if (listeners != null) {
+                for (ConversionListener listener : listeners) {
+                    listener.afterResponseComplete(context);
+                }
+            }
             if(actionPdf != null && !actionPdf.isEmpty()) {
                 MethodExpression methodExpression = application.getExpressionFactory().createMethodExpression(elContext, actionPdf,
                         String.class,
