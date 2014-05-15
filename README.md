@@ -2,6 +2,7 @@
 
 Integração do FlyingSaucer com o JSF
 
+
 ## AVISO IMPORTANTE
 
 A partir da versão 1.2.0, esta biblioteca passou a utilizar o iText 4.1, que ainda
@@ -166,11 +167,8 @@ essa classe.
 * Verifique se você não está usando AJAX - a geração de PDF através de AJAX
 não funciona.
 * Tome cuidado com as seguintes propriedades CSS, elas podem causar problemas!
-** float
-** position: fixed
-Essas duas propriedades afetam a forma como o FlyingSaucer calcula as dimensões
-das propriedades. Se você parar para pensar, "position:fixed" não faz sentido
-em um PDF, e "float" é algo dificílimo de calcular em muitas situações.
+  * float
+  * position: fixed
 
 ### O PDF demora demais para ser gerado!
 
@@ -230,6 +228,41 @@ Segue um exemplo:
 
 Veja o exemplo acima!
 
+### Eu fiz isso, mas os cabeçalhos e rodapés não aparecem em todas as páginas!
+
+Os elementos utilizados como cabeçalho e/ou rodapé devem estar logo no começo da página,
+logo depois da tag "body". Por exemplo, isso não funciona:
+
+    <body>
+        <div class="header">
+            Meu cabeçalho
+        </div>
+        <!-- Conteúdo da página -->
+        teste
+        <div class="footer">
+            Meu rodapé
+        </div>
+    </body>
+    
+Mas isso funciona:
+
+    <body>
+        <div class="header">
+            Meu cabeçalho
+        </div>
+        <div class="footer">
+            Meu rodapé
+        </div>
+        <!-- Conteúdo da página -->
+        teste
+    </body>
+    
+    
+Não se preocupe, o posicionamento dos cabeçalhos e rodapés é definido por CSS, 
+então não há problemas em se colocar o elemento rodapé no começo da página!
+
+
+
 ### Como eu executo algum código antes ou depois de gerado o PDF?
 
 A classe PDFConverterConfig permite que você execute trechos de código antes ou depois
@@ -257,6 +290,7 @@ Há uma implementação de listener específica para gerar/remover cookies:
 
     pdfConfig.setListeners(CookieOperations.doDelete("relnovo"),
                            CookieOperations.doAdd("crieiRelatorio","1"));
+
 
 ### Eu posso usar CSS específico para a geração do PDF?
 
