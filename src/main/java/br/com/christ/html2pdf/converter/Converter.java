@@ -60,8 +60,7 @@ public class Converter {
 		}
 	}
 
-    private boolean mustPreserveNode(Node node) {
-        Element elem = (Element)node;
+    private boolean mustPreserveElem(Element elem) {
         String preserveVal = elem.getAttribute("data-pdf-preserve");
         String mediaVal = elem.getAttribute("media");
         if(mediaVal == null)
@@ -71,29 +70,40 @@ public class Converter {
                 "1".equalsIgnoreCase(preserveVal);
     }
 
+    private String getAttr(Element elem, String attr) {
+        return getAttr(elem, attr, null);
+    }
+
+    private String getAttr(Element elem, String attr, String defaultVal) {
+        if(!elem.hasAttribute(attr))
+            return defaultVal;
+        return elem.getAttribute(attr);
+    }
+
     private void removeStylesheets(Document document) {
         NodeList nodes = document.getElementsByTagName("link");
         for (int i = 0; i < nodes.getLength(); i++) {
-            Node node = nodes.item(i);
-            Node relNode = node.getAttributes().getNamedItem("rel");
-            if (relNode != null && relNode.getNodeValue().equalsIgnoreCase("stylesheet")) {
-                ((Element)node).setAttribute("href","");
+            Element elem = (Element)nodes.item(i);
+            String rel = getAttr(elem, "rel");
+            if ("stylesheet".equalsIgnoreCase(rel) &&
+                    !mustPreserveElem(elem)) {
+                elem.setAttribute("href", "");
             } else {
-                fixPdfMedia(node);
+                fixPdfMedia(elem);
             }
         }
         nodes = document.getElementsByTagName("style");
         for (int i = 0; i < nodes.getLength(); i++) {
-            Node node = nodes.item(i);
-            if(!mustPreserveNode(node))
-                node.setNodeValue("");
+            Element elem = (Element) nodes.item(i);
+            if(!mustPreserveElem(elem))
+                elem.setNodeValue("");
             else
-                fixPdfMedia(node);
+                fixPdfMedia(elem);
         }
     }
 
-    private void fixPdfMedia(Node node) {
-        Element elem =  ((Element)node);
+
+    private void fixPdfMedia(Element elem) {
         String mediaVal = elem.getAttribute("media");
         if(mediaVal == null)
             mediaVal = "print";
