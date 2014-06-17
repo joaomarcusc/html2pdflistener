@@ -75,9 +75,8 @@ public class Converter {
     }
 
     private String getAttr(Element elem, String attr, String defaultVal) {
-        if(!elem.hasAttribute(attr))
-            return defaultVal;
-        return elem.getAttribute(attr);
+        String attrVal = elem.getAttribute(attr);
+        return attrVal != null ? attrVal : defaultVal;
     }
 
     private void removeStylesheets(Document document) {
@@ -117,7 +116,7 @@ public class Converter {
         List<? extends ConversionListener> listeners = context.getListeners();
         if(listeners == null)
             listeners = new ArrayList<ConversionListener>();
-		Document xhtmlContent = null;
+		Document xhtmlContent;
 		Tidy tidy = new Tidy();
 		try {
 			tidy.setFixUri(true);

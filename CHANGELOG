@@ -1,3 +1,6 @@
+1.3.3: 2014-06-17
+* Parece que a implementação do Tidy retorna false para a função hasAttribute (!!). Verificando
+  o retorno da função getAttribute ao invés.
 1.3.2: 2014-05-22
 * Os atributos media="pdf" ou data-pdf-preserve="true" não estavam sendo respeitados para impedir que um 
   estilo fosse removido quando a opção removeStyles está habilitada.
