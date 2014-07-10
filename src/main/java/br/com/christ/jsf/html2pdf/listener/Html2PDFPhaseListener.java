@@ -102,7 +102,7 @@ public class Html2PDFPhaseListener implements PhaseListener {
                         String.class,
                         new Class[]{byte[].class});
                 String outcome = methodExpression.invoke(elContext, new Object[] { bytesPDF }).toString();
-                facesContext.getApplication().getNavigationHandler().handleNavigation(facesContext, "", outcome);
+                facesContext.getApplication().getNavigationHandler().handleNavigation(facesContext, null, outcome);
             } else {
                 response.setContentType("application/pdf");
                 response.addHeader("Content-Disposition","attachment; filename="+nomeArquivo);
