@@ -1,6 +1,7 @@
 package br.com.christ.jsf.html2pdf.listener;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -12,7 +13,7 @@ import br.com.christ.jsf.html2pdf.listener.PDFConverterConfig;
 @Default
 @RequestScoped
 public class PerRequestPDFConverterConfig implements PDFConverterConfig {
-    private List<? extends ConversionListener> listeners;
+    private List<ConversionListener> listeners;
     private boolean preloadResources = false;
     private String fileName = null;
     private boolean enablePdf = false;
@@ -66,12 +67,27 @@ public class PerRequestPDFConverterConfig implements PDFConverterConfig {
     }
 
     @Override
-    public List<? extends ConversionListener> getListeners() {
+    public List<ConversionListener> getListeners() {
         return listeners;
     }
 
     @Override
-    public void setListeners(List<? extends ConversionListener> listeners) {
+    public void addListener(ConversionListener listener) {
+        listeners.add(listener);
+    }
+
+    @Override
+    public void clearListeners() {
+        listeners.clear();
+    }
+
+    @Override
+    public void removeListener(ConversionListener listener) {
+        listeners.remove(listener);
+    }
+
+    @Override
+    public void setListeners(List<ConversionListener> listeners) {
         this.listeners = listeners;
     }
 

@@ -1,14 +1,21 @@
 package br.com.christ.jsf.html2pdf.listener;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.List;
 
 import br.com.christ.html2pdf.converter.ConversionListener;
 
 public interface PDFConverterConfig extends Serializable {
-    public List<? extends ConversionListener> getListeners();
+    public List<ConversionListener> getListeners();
 
-    public void setListeners(List<? extends ConversionListener> listeners);
+	public void addListener(ConversionListener listener);
+
+	public void clearListeners();
+
+	public void removeListener(ConversionListener listener);
+
+    public void setListeners(List<ConversionListener> listeners);
 
     public void setListeners(ConversionListener... listeners);
 

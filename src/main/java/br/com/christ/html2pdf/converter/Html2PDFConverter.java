@@ -12,7 +12,7 @@ public class Html2PDFConverter {
     public static byte[] convertHtmlToPDF(String htmlContent, String url, String encoding, boolean preloadResources, ResourceLoader resourceLoader) throws ConversionException {
         return convertHtmlToPDF(htmlContent, url,encoding, false, resourceLoader, Arrays.asList(new ConversionListener[]{}));
     }
-    public static byte[] convertHtmlToPDF(String htmlContent, String url, String encoding, boolean preloadResources, ResourceLoader resourceLoader, List<? extends ConversionListener> listeners) throws ConversionException {
+    public static byte[] convertHtmlToPDF(String htmlContent, String url, String encoding, boolean preloadResources, ResourceLoader resourceLoader, List<ConversionListener> listeners) throws ConversionException {
 	    ConverterContext context = new ConverterContext();
         context.setListeners(listeners);
 	    context.setHtmlContent(htmlContent);

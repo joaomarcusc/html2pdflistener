@@ -10,7 +10,7 @@ import br.com.christ.html2pdf.loader.ResourceLoader;
 
 @RequestScoped
 public class ConverterContext {
-    private List<? extends ConversionListener> listeners;
+    private List<ConversionListener> listeners;
 	private ResourceLoader resourceLoader;
 	private boolean preloadResources;
 	private String htmlContent;
@@ -71,7 +71,7 @@ public class ConverterContext {
         return listeners;
     }
 
-    public void setListeners(List<? extends ConversionListener> listeners) {
+    public void setListeners(List<ConversionListener> listeners) {
         this.listeners = listeners;
     }
 

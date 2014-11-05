@@ -91,7 +91,7 @@ public class Html2PDFPhaseListener implements PhaseListener {
             converter.convertHtmlToPDF(context);
             byte[] bytesPDF = Html2PDFConverter.convertHtmlToPDF(context);
             config.setEnablePdf(false);
-            List<? extends ConversionListener> listeners = config.getListeners();
+            List<ConversionListener> listeners = config.getListeners();
             if (listeners != null) {
                 for (ConversionListener listener : listeners) {
                     listener.afterResponseComplete(context);
