@@ -1,7 +1,9 @@
 package br.com.christ.jsf.html2pdf.listener;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -13,7 +15,7 @@ import br.com.christ.jsf.html2pdf.listener.PDFConverterConfig;
 @Default
 @RequestScoped
 public class PerRequestPDFConverterConfig implements PDFConverterConfig {
-    private List<ConversionListener> listeners;
+    private List<ConversionListener> listeners = new LinkedList<ConversionListener>();
     private boolean preloadResources = false;
     private String fileName = null;
     private boolean enablePdf = false;
