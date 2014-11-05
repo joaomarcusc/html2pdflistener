@@ -1,3 +1,6 @@
+1.3.7: 2014-10-05
+* Corrigir referência aos cookies quando a URL da página é diferente da URL do POST, o que
+  acontece no JSF sem o ?faces-redirect=true
 1.3.6: 2014-10-05
 * Refatoração do listener para adicionar/remover ao invés de somente adicionar
   todos em uma lista no setter

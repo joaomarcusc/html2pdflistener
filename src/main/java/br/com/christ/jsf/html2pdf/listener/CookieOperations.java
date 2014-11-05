@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import br.com.christ.html2pdf.converter.ConversionListener;
@@ -48,20 +49,39 @@ public class CookieOperations implements ConversionListener {
 
     @Override
     public boolean afterResponseComplete(ConverterContext context) {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
         switch(opType) {
             case CREATE:
-                response.addCookie(new Cookie(name, value));
+                addCookie(new Cookie(name, value));
                 break;
             case DELETE:
                 Cookie cookie = new Cookie(name, "");
                 cookie.setMaxAge(0);
-                response.addCookie(cookie);
+                addCookie(cookie);
                 break;
         }
         return true;
     }
+
+    public void addCookie(Cookie cookie) {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+        HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
+
+        String refererHeader = request.getHeader("Referer");
+
+
+        String contextPath = request.getContextPath();
+        String requestURI = request.getRequestURI();
+
+        String refererURI = refererHeader.substring(refererHeader.indexOf(contextPath));
+        if (!requestURI.equals(refererURI)) {
+            String refererPath = refererURI.substring(0, refererURI.lastIndexOf("/"));
+
+            cookie.setPath(refererPath);
+        }
+        response.addCookie(cookie);
+    }
+
 
 
 
