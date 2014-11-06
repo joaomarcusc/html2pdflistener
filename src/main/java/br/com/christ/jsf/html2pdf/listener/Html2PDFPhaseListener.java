@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("serial")
 @ApplicationScoped
@@ -52,6 +53,8 @@ public class Html2PDFPhaseListener implements PhaseListener {
         ExternalContext externalContext = facesContext.getExternalContext();
         Object oldResponse = externalContext.getResponse();
         String nomeArquivo = "arquivo.pdf";
+
+
         try {
             Application application = facesContext.getApplication();
             ViewHandler viewHandler = application.getViewHandler();
@@ -91,13 +94,15 @@ public class Html2PDFPhaseListener implements PhaseListener {
             converter.convertHtmlToPDF(context);
             byte[] bytesPDF = Html2PDFConverter.convertHtmlToPDF(context);
             config.setEnablePdf(false);
+
             List<ConversionListener> listeners = config.getListeners();
-            if (listeners != null) {
-                for (ConversionListener listener : listeners) {
-                    listener.afterResponseComplete(context);
-                }
-            }
+
             if(actionPdf != null && !actionPdf.isEmpty()) {
+                if (listeners != null) {
+                    for (ConversionListener listener : listeners) {
+                        listener.afterResponseComplete(context);
+                    }
+                }
                 MethodExpression methodExpression = application.getExpressionFactory().createMethodExpression(elContext, actionPdf,
                         String.class,
                         new Class[]{byte[].class});
@@ -105,10 +110,16 @@ public class Html2PDFPhaseListener implements PhaseListener {
                 facesContext.getApplication().getNavigationHandler().handleNavigation(facesContext, null, outcome);
             } else {
                 response.setContentType("application/pdf");
-                response.addHeader("Content-Disposition","attachment; filename="+nomeArquivo);
+                response.addHeader("Content-Disposition", "attachment; filename=" + nomeArquivo);
                 response.getOutputStream().write(bytesPDF);
                 facesContext.responseComplete();
+                if (listeners != null) {
+                    for (ConversionListener listener : listeners) {
+                        listener.afterResponseComplete(context);
+                    }
+                }
             }
+
         } catch (Exception e) {
 	        e.printStackTrace();
             StringWriter stringWriter = new StringWriter();

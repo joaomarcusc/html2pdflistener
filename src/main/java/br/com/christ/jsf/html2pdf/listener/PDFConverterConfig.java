@@ -42,4 +42,5 @@ public interface PDFConverterConfig extends Serializable {
     public boolean isRemoveStyles();
 
     public void setRemoveStyles(boolean removeAllStyles);
+
 }

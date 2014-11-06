@@ -62,22 +62,26 @@ public class CookieOperations implements ConversionListener {
         return true;
     }
 
-    public void addCookie(Cookie cookie) {
+    public static void addCookie(Cookie cookie) {
+        addCookie(cookie, false);
+    }
+
+    public static void addCookie(Cookie cookie, boolean fixReferer) {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
         HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
 
-        String refererHeader = request.getHeader("Referer");
+        if (fixReferer) {
+            String refererHeader = request.getHeader("Referer");
+            String contextPath = request.getContextPath();
+            String requestURI = request.getRequestURI();
 
+            String refererURI = refererHeader.substring(refererHeader.indexOf(contextPath));
+            if (!requestURI.equals(refererURI)) {
+                String refererPath = refererURI.substring(0, refererURI.lastIndexOf("/"));
 
-        String contextPath = request.getContextPath();
-        String requestURI = request.getRequestURI();
-
-        String refererURI = refererHeader.substring(refererHeader.indexOf(contextPath));
-        if (!requestURI.equals(refererURI)) {
-            String refererPath = refererURI.substring(0, refererURI.lastIndexOf("/"));
-
-            cookie.setPath(refererPath);
+                cookie.setPath(refererPath);
+            }
         }
         response.addCookie(cookie);
     }
