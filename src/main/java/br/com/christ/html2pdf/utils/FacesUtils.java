@@ -67,6 +67,8 @@ public class FacesUtils {
             resourceName = resourcePath.substring(resourcePrefix.length() + 1);
         String libraryName = null;
         if (resourcePath.contains("ln=")) {
+            if(resourcePath.contains(";jsessionid="))
+                resourcePath = resourcePath.substring(0, resourcePath.indexOf(";jsessionid=")) + resourcePath.substring(resourcePath.indexOf("?"));
             if (resourceName.contains("?"))
                 resourceName = resourceName.substring(0, resourceName.indexOf("?"));
             if(resourceName.endsWith(".jsf"))

@@ -40,7 +40,7 @@ public class Html2PDFPhaseListener implements PhaseListener {
         PDFConverterConfig config = CDIUtil.getBean(PDFConverterConfig.class);
         HttpServletRequest request = ((HttpServletRequest)event.getFacesContext().getExternalContext().getRequest());
         HttpServletResponse response = ((HttpServletResponse)event.getFacesContext().getExternalContext().getResponse());
-        if(config.isEnablePdf()) {
+        if(config != null && config.isEnablePdf()) {
             gerarPDF(event);
         }
     }
