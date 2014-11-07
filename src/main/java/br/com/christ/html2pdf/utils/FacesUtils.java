@@ -37,6 +37,9 @@ public class FacesUtils {
 	}
 
 	public static byte[] getBytesFromResource(String resourcePath) throws IOException {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = facesContext.getExternalContext();
+        String contextPath = externalContext.getRequestContextPath();
 		InputStream stream = getStreamFromResource(resourcePath);
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		int nRead;
@@ -63,6 +66,9 @@ public class FacesUtils {
         FacesContext context = FacesContext.getCurrentInstance();
         ResourceHandler resourceHandler = context.getApplication().getResourceHandler();
         String resourceName = resourcePath;
+        String contextPath = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
+        if (resourcePath.startsWith(contextPath))
+            resourcePath = resourcePath.substring((contextPath.length()));
         if(resourcePath.startsWith(resourcePrefix))
             resourceName = resourcePath.substring(resourcePrefix.length() + 1);
         String libraryName = null;

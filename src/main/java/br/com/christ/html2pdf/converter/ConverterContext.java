@@ -7,6 +7,7 @@ import javax.faces.bean.RequestScoped;
 
 import br.com.christ.html2pdf.loader.FacesResourceLoader;
 import br.com.christ.html2pdf.loader.ResourceLoader;
+import br.com.christ.jsf.html2pdf.listener.PDFConverterConfig;
 
 @RequestScoped
 public class ConverterContext {
@@ -14,6 +15,7 @@ public class ConverterContext {
 	private ResourceLoader resourceLoader;
 	private boolean preloadResources;
 	private String htmlContent;
+	private String urlPrefix;
 	private String url;
     private boolean removeStyles;
 
@@ -25,6 +27,15 @@ public class ConverterContext {
         url = "";
         htmlContent = "";
         resourceLoader = new FacesResourceLoader();
+	}
+
+	public ConverterContext(PDFConverterConfig config) {
+		ConverterContext context = new ConverterContext();
+		context.setListeners(config.getListeners());
+		context.setPreloadResources(config.isPreloadResources());
+		context.setResourceLoader(new FacesResourceLoader());
+		context.setInputEncoding(config.getEncoding());
+		context.setRemoveStyles(config.isRemoveStyles());
 	}
 
 	public boolean isPreloadResources() {

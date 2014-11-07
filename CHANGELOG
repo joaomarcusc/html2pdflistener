@@ -1,3 +1,7 @@
+1.5.0: 2014-11-07
+* Remover ?jsessid da referência a resources
+* Permitir que um facelet seja renderizado diretamente para PDF, sem
+  precisar usar o PhaseListener
 1.3.8: 2014-11-05
 * Evitar NullPointerException se o PDFConverterConfig não puder
   ser encontrado.
