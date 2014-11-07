@@ -1,11 +1,9 @@
 package br.com.christ.jsf.html2pdf.listener;
 
-import br.com.christ.cdi.CDIUtil;
-import br.com.christ.html2pdf.converter.ConversionListener;
-import br.com.christ.html2pdf.converter.Converter;
-import br.com.christ.html2pdf.converter.ConverterContext;
-import br.com.christ.html2pdf.converter.Html2PDFConverter;
-import br.com.christ.html2pdf.loader.FacesResourceLoader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.net.URL;
+import java.util.List;
 
 import javax.el.ELContext;
 import javax.el.MethodExpression;
@@ -20,116 +18,118 @@ import javax.faces.event.PhaseListener;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
+
+import br.com.christ.cdi.CDIUtil;
+import br.com.christ.html2pdf.converter.ConversionListener;
+import br.com.christ.html2pdf.converter.Converter;
+import br.com.christ.html2pdf.converter.Html2PDFConverter;
+import br.com.christ.html2pdf.converter.PDFConverterContext;
+import br.com.christ.html2pdf.loader.FacesResourceLoader;
 
 @SuppressWarnings("serial")
 @ApplicationScoped
 public class Html2PDFPhaseListener implements PhaseListener {
 
-    @Inject
-    PDFConverterConfig config;
+	@Inject
+	PDFConverterConfig config;
 
-    public void afterPhase(PhaseEvent event) {
-    }
+	public void afterPhase(PhaseEvent event) {
+	}
 
-    public void beforePhase(PhaseEvent event) {
-        PDFConverterConfig config = CDIUtil.getBean(PDFConverterConfig.class);
-        HttpServletRequest request = ((HttpServletRequest)event.getFacesContext().getExternalContext().getRequest());
-        HttpServletResponse response = ((HttpServletResponse)event.getFacesContext().getExternalContext().getResponse());
-        if(config != null && config.isEnablePdf()) {
-            gerarPDF(event);
-        }
-    }
+	public void beforePhase(PhaseEvent event) {
+		PDFConverterConfig config = CDIUtil.getBean(PDFConverterConfig.class);
+		HttpServletRequest request = ((HttpServletRequest) event.getFacesContext().getExternalContext().getRequest());
+		HttpServletResponse response = ((HttpServletResponse) event.getFacesContext().getExternalContext().getResponse());
+		if (config != null && config.isEnablePdf()) {
+			gerarPDF(event);
+		}
+	}
 
-    private void gerarPDF(PhaseEvent event) {
-        PDFConverterConfig config = CDIUtil.getBean(PDFConverterConfig.class);
-        HttpServletRequest request = ((HttpServletRequest)event.getFacesContext().getExternalContext().getRequest());
-        HttpServletResponse response = ((HttpServletResponse)event.getFacesContext().getExternalContext().getResponse());
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        ExternalContext externalContext = facesContext.getExternalContext();
-        Object oldResponse = externalContext.getResponse();
-        String nomeArquivo = "arquivo.pdf";
+	private void gerarPDF(PhaseEvent event) {
+		PDFConverterConfig config = CDIUtil.getBean(PDFConverterConfig.class);
+		HttpServletRequest request = ((HttpServletRequest) event.getFacesContext().getExternalContext().getRequest());
+		HttpServletResponse response = ((HttpServletResponse) event.getFacesContext().getExternalContext().getResponse());
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		ExternalContext externalContext = facesContext.getExternalContext();
+		Object oldResponse = externalContext.getResponse();
+		String nomeArquivo = "arquivo.pdf";
 
 
-        try {
-            Application application = facesContext.getApplication();
-            ViewHandler viewHandler = application.getViewHandler();
-            ELContext elContext = facesContext.getELContext();
-            String actionPdf = null;
-            if(config.getPdfAction() != null)
-                actionPdf = config.getPdfAction();
-            if(config.getFileName() != null)
-                nomeArquivo = config.getFileName();
-            String encoding = ((HttpServletRequest)facesContext.getExternalContext().getRequest()).getCharacterEncoding();
-            if (config.getEncoding() != null)
-                encoding = config.getEncoding();
+		try {
+			Application application = facesContext.getApplication();
+			ViewHandler viewHandler = application.getViewHandler();
+			ELContext elContext = facesContext.getELContext();
+			String actionPdf = null;
+			if (config.getPdfAction() != null)
+				actionPdf = config.getPdfAction();
+			if (config.getFileName() != null)
+				nomeArquivo = config.getFileName();
+			String encoding = ((HttpServletRequest) facesContext.getExternalContext().getRequest()).getCharacterEncoding();
+			if (config.getEncoding() != null)
+				encoding = config.getEncoding();
 
-            ResponseCatcher catcher = new ResponseCatcher(response);
-            externalContext.setResponse(catcher);
-            viewHandler.renderView(facesContext, facesContext.getViewRoot());
-            String htmlContent = catcher.toString();
-            externalContext.setResponse(oldResponse);
-            URL url = new URL(request.getRequestURL().toString());
-            URL newUrl = new URL(url.getProtocol(),
-                    url.getHost(),
-                    url.getPort(),
-                    facesContext.getExternalContext().getRequestContextPath() + facesContext.getViewRoot().getViewId());
-	        // Force preloading if the server is HTTPS
-	        boolean preloadResources = config.isPreloadResources()
-			        || url.getProtocol().toLowerCase().equals("https");
+			ResponseCatcher catcher = new ResponseCatcher(response);
+			externalContext.setResponse(catcher);
+			viewHandler.renderView(facesContext, facesContext.getViewRoot());
+			String htmlContent = catcher.toString();
+			externalContext.setResponse(oldResponse);
+			URL url = new URL(request.getRequestURL().toString());
+			URL newUrl = new URL(url.getProtocol(),
+					url.getHost(),
+					url.getPort(),
+					facesContext.getExternalContext().getRequestContextPath() + facesContext.getViewRoot().getViewId());
+			// Force preloading if the server is HTTPS
+			boolean preloadResources = config.isPreloadResources()
+					|| url.getProtocol().toLowerCase().equals("https");
 
-            ConverterContext context = new ConverterContext();
-            context.setListeners(config.getListeners());
-            context.setHtmlContent(htmlContent);
-            context.setUrl(newUrl.toString());
-            context.setPreloadResources(preloadResources);
-            context.setResourceLoader(new FacesResourceLoader());
-            context.setInputEncoding(encoding);
-            context.setRemoveStyles(config.isRemoveStyles());
-            Converter converter = new Converter();
-            converter.convertHtmlToPDF(context);
-            byte[] bytesPDF = Html2PDFConverter.convertHtmlToPDF(context);
-            config.setEnablePdf(false);
+			PDFConverterContext context = new PDFConverterContext();
+			context.setListeners(config.getListeners());
+			context.setHtmlContent(htmlContent);
+			context.setUrl(newUrl.toString());
+			context.setPreloadResources(preloadResources);
+			context.setResourceLoader(new FacesResourceLoader());
+			context.setInputEncoding(encoding);
+			context.setRemoveStyles(config.isRemoveStyles());
+			Converter converter = new Converter();
+			converter.convertHtmlToPDF(context);
+			byte[] bytesPDF = Html2PDFConverter.convertHtmlToPDF(context);
+			config.setEnablePdf(false);
 
-            List<ConversionListener> listeners = config.getListeners();
+			List<ConversionListener> listeners = config.getListeners();
 
-            if(actionPdf != null && !actionPdf.isEmpty()) {
-                if (listeners != null) {
-                    for (ConversionListener listener : listeners) {
-                        listener.afterResponseComplete(context);
-                    }
-                }
-                MethodExpression methodExpression = application.getExpressionFactory().createMethodExpression(elContext, actionPdf,
-                        String.class,
-                        new Class[]{byte[].class});
-                String outcome = methodExpression.invoke(elContext, new Object[] { bytesPDF }).toString();
-                facesContext.getApplication().getNavigationHandler().handleNavigation(facesContext, null, outcome);
-            } else {
-                response.setContentType("application/pdf");
-                response.addHeader("Content-Disposition", "attachment; filename=" + nomeArquivo);
-                response.getOutputStream().write(bytesPDF);
-                facesContext.responseComplete();
-                if (listeners != null) {
-                    for (ConversionListener listener : listeners) {
-                        listener.afterResponseComplete(context);
-                    }
-                }
-            }
+			if (actionPdf != null && !actionPdf.isEmpty()) {
+				if (listeners != null) {
+					for (ConversionListener listener : listeners) {
+						listener.afterResponseComplete(context);
+					}
+				}
+				MethodExpression methodExpression = application.getExpressionFactory().createMethodExpression(elContext, actionPdf,
+						String.class,
+						new Class[]{byte[].class});
+				String outcome = methodExpression.invoke(elContext, new Object[]{bytesPDF}).toString();
+				facesContext.getApplication().getNavigationHandler().handleNavigation(facesContext, null, outcome);
+			} else {
+				response.setContentType("application/pdf");
+				response.addHeader("Content-Disposition", "attachment; filename=" + nomeArquivo);
+				response.getOutputStream().write(bytesPDF);
+				facesContext.responseComplete();
+				if (listeners != null) {
+					for (ConversionListener listener : listeners) {
+						listener.afterResponseComplete(context);
+					}
+				}
+			}
 
-        } catch (Exception e) {
-	        e.printStackTrace();
-            StringWriter stringWriter = new StringWriter();
-            PrintWriter printWriter = new PrintWriter(stringWriter);
-            e.printStackTrace(printWriter);
-            throw new RuntimeException("Error converting the HTML content: "+stringWriter.toString());
-        }
-    }
+		} catch (Exception e) {
+			e.printStackTrace();
+			StringWriter stringWriter = new StringWriter();
+			PrintWriter printWriter = new PrintWriter(stringWriter);
+			e.printStackTrace(printWriter);
+			throw new RuntimeException("Error converting the HTML content: " + stringWriter.toString());
+		}
+	}
 
-    public PhaseId getPhaseId() {
-        return PhaseId.RENDER_RESPONSE;
-    }
+	public PhaseId getPhaseId() {
+		return PhaseId.RENDER_RESPONSE;
+	}
 }

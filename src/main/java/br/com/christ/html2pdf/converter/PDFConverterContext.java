@@ -10,7 +10,7 @@ import br.com.christ.html2pdf.loader.ResourceLoader;
 import br.com.christ.jsf.html2pdf.listener.PDFConverterConfig;
 
 @RequestScoped
-public class ConverterContext {
+public class PDFConverterContext {
     private List<ConversionListener> listeners;
 	private ResourceLoader resourceLoader;
 	private boolean preloadResources;
@@ -21,7 +21,7 @@ public class ConverterContext {
 
 	private String inputEncoding;
 
-	public ConverterContext() {
+	public PDFConverterContext() {
         setListeners(new ArrayList<ConversionListener>());
         preloadResources = false;
         url = "";
@@ -29,7 +29,7 @@ public class ConverterContext {
         resourceLoader = new FacesResourceLoader();
 	}
 
-	public ConverterContext(PDFConverterConfig config) {
+	public PDFConverterContext(PDFConverterConfig config) {
 		this.setListeners(config.getListeners());
 		this.setPreloadResources(config.isPreloadResources());
 		this.setResourceLoader(new FacesResourceLoader());

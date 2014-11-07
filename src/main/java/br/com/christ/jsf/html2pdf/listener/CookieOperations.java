@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import br.com.christ.html2pdf.converter.ConversionListener;
-import br.com.christ.html2pdf.converter.ConverterContext;
+import br.com.christ.html2pdf.converter.PDFConverterContext;
 
 public class CookieOperations implements ConversionListener {
     private static enum OpType {
@@ -38,17 +38,17 @@ public class CookieOperations implements ConversionListener {
     }
 
     @Override
-    public boolean beforeConvert(ConverterContext context) throws IOException {
+    public boolean beforeConvert(PDFConverterContext context) throws IOException {
         return false;
     }
 
     @Override
-    public boolean afterConvert(ConverterContext context) {
+    public boolean afterConvert(PDFConverterContext context) {
         return false;
     }
 
     @Override
-    public boolean afterResponseComplete(ConverterContext context) {
+    public boolean afterResponseComplete(PDFConverterContext context) {
         switch(opType) {
             case CREATE:
                 addCookie(new Cookie(name, value));

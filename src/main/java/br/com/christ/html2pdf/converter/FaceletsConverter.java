@@ -21,11 +21,11 @@ public class FaceletsConverter {
 		request.setAttribute("pdfConfig", config);
 		FaceletRenderer renderer = new FaceletRenderer(FacesContext.getCurrentInstance());
 		String content = renderer.renderView(viewId);
-		ConverterContext converterContext = new ConverterContext(config);
-		converterContext.setUrl("");
-		converterContext.setHtmlContent(content);
+		PDFConverterContext PDFConverterContext = new PDFConverterContext(config);
+		PDFConverterContext.setUrl("");
+		PDFConverterContext.setHtmlContent(content);
 		byte[] bytesPdf;
-		bytesPdf = Html2PDFConverter.convertHtmlToPDF(converterContext);
+		bytesPdf = Html2PDFConverter.convertHtmlToPDF(PDFConverterContext);
 		return bytesPdf;
 	}
 }

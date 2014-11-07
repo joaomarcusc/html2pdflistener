@@ -5,7 +5,7 @@ import java.io.IOException;
 
 
 public interface ConversionListener {
-	boolean beforeConvert(ConverterContext context) throws IOException;
-	boolean afterConvert(ConverterContext context);
-    boolean afterResponseComplete(ConverterContext context);
+	boolean beforeConvert(PDFConverterContext context) throws IOException;
+	boolean afterConvert(PDFConverterContext context);
+    boolean afterResponseComplete(PDFConverterContext context);
 }
