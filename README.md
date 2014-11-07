@@ -30,7 +30,7 @@ Depois, adicione a dependência no seu pom.xml
     <dependency>
         <groupId>br.com.christ.jsf</groupId>
         <artifactId>html2pdflistener</artifactId>
-        <version>1.5.3</version>
+        <version>1.5.7</version>
     </dependency>
 
 Agora, adicione no seu faces-config.xml o listener:
