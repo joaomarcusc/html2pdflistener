@@ -30,12 +30,11 @@ public class ConverterContext {
 	}
 
 	public ConverterContext(PDFConverterConfig config) {
-		ConverterContext context = new ConverterContext();
-		context.setListeners(config.getListeners());
-		context.setPreloadResources(config.isPreloadResources());
-		context.setResourceLoader(new FacesResourceLoader());
-		context.setInputEncoding(config.getEncoding());
-		context.setRemoveStyles(config.isRemoveStyles());
+		this.setListeners(config.getListeners());
+		this.setPreloadResources(config.isPreloadResources());
+		this.setResourceLoader(new FacesResourceLoader());
+		this.setInputEncoding(config.getEncoding());
+		this.setRemoveStyles(config.isRemoveStyles());
 	}
 
 	public boolean isPreloadResources() {
