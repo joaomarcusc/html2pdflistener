@@ -30,7 +30,7 @@ Depois, adicione a dependência no seu pom.xml
     <dependency>
         <groupId>br.com.christ.jsf</groupId>
         <artifactId>html2pdflistener</artifactId>
-        <version>1.5.0</version>
+        <version>1.5.1</version>
     </dependency>
 
 Agora, adicione no seu faces-config.xml o listener:
@@ -39,9 +39,9 @@ Agora, adicione no seu faces-config.xml o listener:
       <phase-listener>br.com.christ.jsf.html2pdf.listener.Html2PDFPhaseListener</phase-listener>
      </lifecycle>
 
-## NOVO na versão 1.5.0: Renderizando um template .xhtml para PDF
+## NOVO na versão 1.5.1: Renderizando um template .xhtml para PDF
 
-A partir da versão 1.5.0, você pode obter os bytes de um template .xhtml renderizado sem a necessidade
+A partir da versão 1.5.1, você pode obter os bytes de um template .xhtml renderizado sem a necessidade
 do uso do PhaseListener! Para isso, utilize a função Html2PDFConverter.renderFaceletAsPDF:
 
     byte[] output = Html2PDFConverter.renderFaceletAsPDF(config, paginaDestino);
