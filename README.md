@@ -44,14 +44,14 @@ Agora, adicione no seu faces-config.xml o listener:
 A partir da versão 1.5.1, você pode obter os bytes de um template .xhtml renderizado sem a necessidade
 do uso do PhaseListener! Para isso, utilize a função Html2PDFConverter.renderFaceletAsPDF:
 
-    byte[] output = Html2PDFConverter.renderFaceletAsPDF(config, paginaDestino);
+    byte[] output = FaceletsConverter.renderFaceletAsPDF(config, paginaDestino);
 
 O primeiro parâmetro é uma instância de PDFConverterConfig. O segundo é a página de destino. Exemplo:
 
     PDFConverterConfig config = new DefaultPDFConverterConfig();
     config.setFileName("meuarquivo.pdf");
     config.setPreloadResources(true);
-    byte[] output = Html2PDFConverter.renderFaceletAsPDF(config, paginaDestino);
+    byte[] output = FaceletsConverter.renderFaceletAsPDF(config, paginaDestino);
 
 ## Mostrando um PDF diretamente ao usuário
 
