@@ -1,6 +1,9 @@
 package br.com.christ.html2pdf.factory;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.w3c.dom.Element;
 import org.xhtmlrenderer.extend.FSImage;
@@ -22,11 +25,14 @@ import com.lowagie.text.pdf.codec.Base64;
 
 public class B64OrPreloadedReplacedElementFactory implements ReplacedElementFactory {
 
+	private LinkedHashMap<String, ReplacedElement> elementCache;
+
 	private ResourceLoader resourceLoader;
 
 	public B64OrPreloadedReplacedElementFactory() {
 		super();
 		setResourceLoader(new FacesResourceLoader());
+		elementCache = new LinkedHashMap<String, ReplacedElement>();
 	}
 
 	public B64OrPreloadedReplacedElementFactory(ResourceLoader resourceLoader) {
@@ -40,28 +46,34 @@ public class B64OrPreloadedReplacedElementFactory implements ReplacedElementFact
 		if (e == null) {
 			return null;
 		}
+		ReplacedElement imgElement = null;
 		String nodeName = e.getNodeName();
 		if (nodeName.equals("img")) {
 			String srcAttribute = e.getAttribute("src");
-			FSImage fsImage;
-			try {
-				fsImage = buildImage(srcAttribute, uac);
-			} catch (BadElementException e1) {
-				e1.printStackTrace();
-				fsImage = null;
-			} catch (IOException e1) {
-				fsImage = null;
-				e1.printStackTrace();
-			}
-			if (fsImage != null) {
-				if (cssWidth != -1 || cssHeight != -1) {
-					fsImage.scale(cssWidth, cssHeight);
+			if (elementCache.containsKey(srcAttribute)) {
+				imgElement = elementCache.get(srcAttribute);
+			} else {
+				FSImage fsImage;
+				try {
+					fsImage = buildImage(srcAttribute, uac);
+				} catch (BadElementException e1) {
+					e1.printStackTrace();
+					fsImage = null;
+				} catch (IOException e1) {
+					fsImage = null;
+					e1.printStackTrace();
 				}
-				return new ITextImageElement(fsImage);
+				if (fsImage != null) {
+					if (cssWidth != -1 || cssHeight != -1) {
+						fsImage.scale(cssWidth, cssHeight);
+					}
+					imgElement = new ITextImageElement(fsImage);
+				}
 			}
+			elementCache.put(srcAttribute, imgElement);
 		}
 
-		return null;
+		return imgElement;
 	}
 
 	protected FSImage buildImage(String srcAttr, UserAgentCallback uac) throws IOException, BadElementException {

@@ -44,14 +44,14 @@ public class Converter {
 			if (hrefNode != null) {
 
 				StyleNode styleNode = new StyleNode();
-                styleNode.source = loader.getStringFromReference(hrefNode.getNodeValue());
+				styleNode.source = loader.getStringFromReference(hrefNode.getNodeValue());
 				if (node.getAttributes().getNamedItem("media") != null)
 					styleNode.media = node.getAttributes().getNamedItem("media").getNodeValue();
 				styleSheets.add(styleNode);
 			}
 			itemsToRemove.add(node);
-            assert hrefNode != null;
-            hrefNode.setNodeValue("");
+			assert hrefNode != null;
+			hrefNode.setNodeValue("");
 		}
 		for (Node node : itemsToRemove) {
 			head.removeChild(node);
@@ -68,57 +68,57 @@ public class Converter {
 		}
 	}
 
-    private boolean mustPreserveElem(Element elem) {
-        String preserveVal = elem.getAttribute("data-pdf-preserve");
-        String mediaVal = elem.getAttribute("media");
-        if(mediaVal == null)
-            mediaVal = "";
-        return mediaVal.contains("pdf") ||
-                "true".equalsIgnoreCase(preserveVal) ||
-                "1".equalsIgnoreCase(preserveVal);
-    }
+	private boolean mustPreserveElem(Element elem) {
+		String preserveVal = elem.getAttribute("data-pdf-preserve");
+		String mediaVal = elem.getAttribute("media");
+		if (mediaVal == null)
+			mediaVal = "";
+		return mediaVal.contains("pdf") ||
+				"true".equalsIgnoreCase(preserveVal) ||
+				"1".equalsIgnoreCase(preserveVal);
+	}
 
-    private String getAttr(Element elem, String attr) {
-        return getAttr(elem, attr, null);
-    }
+	private String getAttr(Element elem, String attr) {
+		return getAttr(elem, attr, null);
+	}
 
-    private String getAttr(Element elem, String attr, String defaultVal) {
-        String attrVal = elem.getAttribute(attr);
-        return attrVal != null ? attrVal : defaultVal;
-    }
+	private String getAttr(Element elem, String attr, String defaultVal) {
+		String attrVal = elem.getAttribute(attr);
+		return attrVal != null ? attrVal : defaultVal;
+	}
 
-    private void removeStylesheets(Document document) {
-        NodeList nodes = document.getElementsByTagName("link");
-        for (int i = 0; i < nodes.getLength(); i++) {
-            Element elem = (Element)nodes.item(i);
-            String rel = getAttr(elem, "rel");
-            if ("stylesheet".equalsIgnoreCase(rel) &&
-                    !mustPreserveElem(elem)) {
-                elem.setAttribute("href", "");
-            } else {
-                fixPdfMedia(elem);
-            }
+	private void removeStylesheets(Document document) {
+		NodeList nodes = document.getElementsByTagName("link");
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Element elem = (Element) nodes.item(i);
+			String rel = getAttr(elem, "rel");
+			if ("stylesheet".equalsIgnoreCase(rel) &&
+					!mustPreserveElem(elem)) {
+				elem.setAttribute("href", "");
+			} else {
+				fixPdfMedia(elem);
+			}
 
-        }
-        nodes = document.getElementsByTagName("style");
-        for (int i = 0; i < nodes.getLength(); i++) {
-            Element elem = (Element) nodes.item(i);
-            if(!mustPreserveElem(elem))
-                elem.setNodeValue("");
-            else
-                fixPdfMedia(elem);
-        }
-    }
+		}
+		nodes = document.getElementsByTagName("style");
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Element elem = (Element) nodes.item(i);
+			if (!mustPreserveElem(elem))
+				elem.setNodeValue("");
+			else
+				fixPdfMedia(elem);
+		}
+	}
 
 
-    private void fixPdfMedia(Element elem) {
-        String mediaVal = elem.getAttribute("media");
-        if(mediaVal == null)
-            mediaVal = "print";
-        if(!mediaVal.contains("print"))
-            mediaVal = mediaVal+",print";
-        elem.setAttribute("media", mediaVal);
-    }
+	private void fixPdfMedia(Element elem) {
+		String mediaVal = elem.getAttribute("media");
+		if (mediaVal == null)
+			mediaVal = "print";
+		if (!mediaVal.contains("print"))
+			mediaVal = mediaVal + ",print";
+		elem.setAttribute("media", mediaVal);
+	}
 
 	private String docToStr(Document document) {
 		StringWriter writer = new StringWriter();
@@ -140,9 +140,9 @@ public class Converter {
 
 	public byte[] convertHtmlToPDF(PDFConverterContext context) throws ConversionException {
 		ByteArrayOutputStream pdfStream = new ByteArrayOutputStream();
-        List<? extends ConversionListener> listeners = context.getListeners();
-        if(listeners == null)
-            listeners = new ArrayList<ConversionListener>();
+		List<? extends ConversionListener> listeners = context.getListeners();
+		if (listeners == null)
+			listeners = new ArrayList<ConversionListener>();
 		Document xhtmlContent;
 		Tidy tidy = new Tidy();
 		try {
@@ -151,20 +151,20 @@ public class Converter {
 			tidy.setShowWarnings(false);
 			tidy.setAsciiChars(true);
 			tidy.setNumEntities(true);
-            tidy.setOutputEncoding(context.getInputEncoding());
-            tidy.setInputEncoding(context.getInputEncoding());
+			tidy.setOutputEncoding(context.getInputEncoding());
+			tidy.setInputEncoding(context.getInputEncoding());
 			xhtmlContent = tidy.parseDOM(new ByteArrayInputStream(context.getHtmlContent().getBytes()), pdfStream);
 		} catch (Exception e) {
 			throw new ConversionException(e);
 		}
 		try {
-            ITextRenderer renderer = new ITextRenderer();
+			ITextRenderer renderer = new ITextRenderer();
 			B64OrPreloadedReplacedElementFactory replacementFactory = new B64OrPreloadedReplacedElementFactory();
 			replacementFactory.setResourceLoader(context.getResourceLoader());
 			renderer.getSharedContext().setReplacedElementFactory(replacementFactory);
-            if (context.isRemoveStyles())
-                removeStylesheets(xhtmlContent);
-            if (context.isPreloadResources()) {
+			if (context.isRemoveStyles())
+				removeStylesheets(xhtmlContent);
+			if (context.isPreloadResources()) {
 				preloadStylesheets(context.getResourceLoader(), xhtmlContent);
 				replacementFactory.setPreloadAllImages(true);
 			}
@@ -180,13 +180,13 @@ public class Converter {
 		} catch (IOException e) {
 			throw new ConversionException(e);
 		} catch (DocumentException e) {
-            throw new ConversionException(e);
-        }
-        for (ConversionListener listener : listeners) {
+			throw new ConversionException(e);
+		}
+		for (ConversionListener listener : listeners) {
 			listener.afterConvert(context);
 		}
 
-        return pdfStream.toByteArray();
+		return pdfStream.toByteArray();
 	}
 
 }

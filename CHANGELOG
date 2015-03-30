@@ -1,3 +1,8 @@
+1.5.8: 2015-03-30
+* Refatoração do projeto para permitir que seja gerada um PDF a partir de uma
+página JSF diretamente, sem a necessidade de se utilizar um Phase Listener.
+* Fazer cache das imagens no preload de recursos.
+
 1.5.1: 2014-11-07
 * Remover ?jsessid da referência a resources
 * Permitir que um facelet seja renderizado diretamente para PDF, sem

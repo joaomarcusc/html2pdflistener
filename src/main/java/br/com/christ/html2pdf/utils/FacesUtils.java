@@ -57,6 +57,12 @@ public class FacesUtils {
         if (resourcePath.startsWith(resourcePrefix)) {
             return getStreamFromFacesResource(resourcePath);
         } else {
+            // For some reason, some JSF resource component is "smart" enough to include parameters
+            // on a request to a static resource. Remove anything that goes after a "?" character
+            if (resourcePath.contains("?")) {
+                resourcePath = resourcePath.substring(0, resourcePath.indexOf('?'));
+            }
+
             return FacesContext.getCurrentInstance().getExternalContext()
                     .getResourceAsStream(resourcePath);
         }
