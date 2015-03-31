@@ -159,6 +159,7 @@ public class Converter {
 		}
 		try {
 			ITextRenderer renderer = new ITextRenderer();
+			renderer.getSharedContext().setUserAgentCallback(new FacesUserAgentCallback(renderer.getOutputDevice()));
 			B64OrPreloadedReplacedElementFactory replacementFactory = new B64OrPreloadedReplacedElementFactory();
 			replacementFactory.setResourceLoader(context.getResourceLoader());
 			renderer.getSharedContext().setReplacedElementFactory(replacementFactory);

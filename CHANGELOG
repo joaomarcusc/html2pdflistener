@@ -1,3 +1,7 @@
+1.5.10: 2015-03-31
+* Agora e possivel carregar CSS que façam referência a urls externas, pois
+foi criado um FacesUserAgentCallback para carregar bytes de URLs
+
 1.5.8: 2015-03-30
 * Refatoração do projeto para permitir que seja gerada um PDF a partir de uma
 página JSF diretamente, sem a necessidade de se utilizar um Phase Listener.
