@@ -1,3 +1,7 @@
+1.5.11: 2015-04-06
+* Se uma imagem não for encontrada, usar uma imagem padrão (por enquanto,
+fixo como um PNG de 1x1)
+
 1.5.10: 2015-03-31
 * Agora e possivel carregar CSS que façam referência a urls externas, pois
 foi criado um FacesUserAgentCallback para carregar bytes de URLs
