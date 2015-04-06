@@ -60,7 +60,13 @@
     <distributionManagement>
         <repository>
             <id>gh-pages</id>
+            <url>file:///home/03106709936/devel/sinesp/workspace_des/01-Sistema/05-Implementacao/01-Aplicacao/mavenRepo/</url>
+        </repository>
+        <!--
+          <repository>
+            <id>gh-pages</id>
             <url>file:///${basedir}/../html2pdflistener-repo/repository/</url>
         </repository>
+        -->
     </distributionManagement>
 </project>
