@@ -1,12 +1,12 @@
 package br.com.christ.html2pdf.converter;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -14,19 +14,22 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Cleaner;
+import org.jsoup.safety.Whitelist;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.tidy.Tidy;
-import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import br.com.christ.html2pdf.exception.ConversionException;
-import br.com.christ.html2pdf.factory.B64OrPreloadedReplacedElementFactory;
 import br.com.christ.html2pdf.loader.ResourceLoader;
-import com.lowagie.text.DocumentException;
+import com.openhtmltopdf.DOMBuilder;
+import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 
 public class Converter {
+
+	private static final int TIMEOUT = 10000;
 
 	private static class StyleNode {
 		String source = null;
@@ -144,43 +147,28 @@ public class Converter {
 		if (listeners == null)
 			listeners = new ArrayList<ConversionListener>();
 		Document xhtmlContent;
-		Tidy tidy = new Tidy();
+
+		xhtmlContent = parseHtmlContent(context.getHtmlContent(), context.getUrl(), context.getInputEncoding());
 		try {
-			tidy.setFixUri(true);
-			tidy.setXHTML(true);
-			tidy.setShowWarnings(false);
-			tidy.setAsciiChars(true);
-			tidy.setNumEntities(true);
-			tidy.setOutputEncoding(context.getInputEncoding());
-			tidy.setInputEncoding(context.getInputEncoding());
-			xhtmlContent = tidy.parseDOM(new ByteArrayInputStream(context.getHtmlContent().getBytes()), pdfStream);
-		} catch (Exception e) {
-			throw new ConversionException(e);
-		}
-		try {
-			ITextRenderer renderer = new ITextRenderer();
-			renderer.getSharedContext().setUserAgentCallback(new FacesUserAgentCallback(renderer.getOutputDevice()));
-			B64OrPreloadedReplacedElementFactory replacementFactory = new B64OrPreloadedReplacedElementFactory();
-			replacementFactory.setResourceLoader(context.getResourceLoader());
-			renderer.getSharedContext().setReplacedElementFactory(replacementFactory);
+
 			if (context.isRemoveStyles())
 				removeStylesheets(xhtmlContent);
 			if (context.isPreloadResources()) {
 				preloadStylesheets(context.getResourceLoader(), xhtmlContent);
-				replacementFactory.setPreloadAllImages(true);
 			}
-			renderer.setDocument(xhtmlContent, context.getUrl());
 			for (ConversionListener listener : listeners) {
 				listener.beforeConvert(context);
 			}
-			renderer.layout();
 			pdfStream.reset();
 
-			renderer.createPDF(pdfStream);
-
-		} catch (IOException e) {
-			throw new ConversionException(e);
-		} catch (DocumentException e) {
+			PdfRendererBuilder builder = new PdfRendererBuilder();
+			builder.withUri(context.getUrl());
+			builder.toStream(pdfStream);
+			builder.withW3cDocument(xhtmlContent, context.getUrl());
+			builder.useHttpStreamImplementation(context.getHttpStreamFactory());
+			builder.run();
+		} catch (Exception e) {
+			e.printStackTrace();
 			throw new ConversionException(e);
 		}
 		for (ConversionListener listener : listeners) {
@@ -188,6 +176,21 @@ public class Converter {
 		}
 
 		return pdfStream.toByteArray();
+	}
+
+	private Document parseHtmlContent(final String htmlContent, final String url, final String inputEncoding) throws ConversionException {
+		// O JTagSoup, por algum motivo, quer inserir "#&13;" depois de <br /> com quebra de linha
+		// Retirar a quebra de linha no final do <br /> para evitar essa abominação.
+		String fixedHtml = htmlContent
+				.replace("<br />\n", "<br>")
+				.replace("<br />\r\n", "<br>");
+
+		try {
+			org.jsoup.nodes.Document doc = Jsoup.parse(fixedHtml, url);
+			return DOMBuilder.jsoup2DOM(doc);
+		} catch (Exception e) {
+			throw new ConversionException(e);
+		}
 	}
 
 }

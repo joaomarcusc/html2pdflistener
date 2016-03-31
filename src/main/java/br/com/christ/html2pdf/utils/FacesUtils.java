@@ -1,12 +1,9 @@
 package br.com.christ.html2pdf.utils;
 
-import javax.el.ELContext;
-import javax.el.ELResolver;
 import javax.faces.application.Resource;
 import javax.faces.application.ResourceHandler;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
 
 import java.io.*;
 import java.util.logging.Logger;
@@ -44,6 +41,9 @@ public class FacesUtils {
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		int nRead;
 		byte[] data = new byte[1024];
+		if (stream == null) {
+			return new byte[0];
+		}
 		while ((nRead = stream.read(data, 0, data.length)) != -1) {
 			buffer.write(data, 0, nRead);
 		}
@@ -54,6 +54,10 @@ public class FacesUtils {
 
 
     private static InputStream getStreamFromResource(String resourcePath) throws IOException {
+	    String fullBasePath = getBaseFacesURL();
+	    if (resourcePath.startsWith(fullBasePath)) {
+		    resourcePath = resourcePath.substring(fullBasePath.length());
+	    }
         if (resourcePath.startsWith(resourcePrefix)) {
             return getStreamFromFacesResource(resourcePath);
         } else {
@@ -120,5 +124,11 @@ public class FacesUtils {
 			linha = bufferedReader.readLine();
 		}
 		return sb.toString();
+	}
+
+	public static String getBaseFacesURL() {
+		ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+		return externalContext.getRequestScheme() + "://" + externalContext.getRequestServerName() + ":"
+				+ externalContext.getRequestServerPort() + externalContext.getRequestContextPath();
 	}
 }

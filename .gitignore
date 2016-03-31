@@ -1,18 +1,9 @@
-CVS
-*.class
-target
-
-# Package Files #
-*.jar
-*.war
-*.ear
-
-# Backup Files #
 *~
-~*
-.#*
-
-# IDE Project Files #
 .project
 .settings
+.jazz*
 *.iml
+target
+bin
+.idea
+

@@ -5,9 +5,9 @@ Integração do FlyingSaucer com o JSF
 
 ## AVISO IMPORTANTE
 
-A partir da versão 1.2.0, esta biblioteca passou a utilizar o iText 4.1, que ainda
-possuía uma licença que permitia o uso da mesma em projetos comerciais. Se você utiliza
-esta biblioteca em um projeto comercial, precisa utilizar esta nova versão!
+A partir da versão 2.0.0-BETA1, esta biblioteca passou a utilizar o openhtml2pdf,
+que trocou uma versão antiga do iText (pois as novas não permitem uso comercial)
+pelo PDFBox. 
 
 ## Objetivo
 
@@ -30,90 +30,23 @@ Depois, adicione a dependência no seu pom.xml
     <dependency>
         <groupId>br.com.christ.jsf</groupId>
         <artifactId>html2pdflistener</artifactId>
-        <version>1.5.11</version>
+        <version>2.0.0-BETA1</version>
     </dependency>
 
-Agora, adicione no seu faces-config.xml o listener:
+## Renderizando um template .xhtml para PDF
 
-     <lifecycle>
-      <phase-listener>br.com.christ.jsf.html2pdf.listener.Html2PDFPhaseListener</phase-listener>
-     </lifecycle>
-
-## NOVO na versão 1.5.1: Renderizando um template .xhtml para PDF
-
-A partir da versão 1.5.1, você pode obter os bytes de um template .xhtml renderizado sem a necessidade
-do uso do PhaseListener! Para isso, utilize a função Html2PDFConverter.renderFaceletAsPDF:
+Você pode obter renderizar uma view .html para PDF de qualquer parte do sistema, utilizando o método abaixo:
 
     byte[] output = FaceletsConverter.renderFaceletAsPDF(config, paginaDestino);
+
+Dica: utilize beans RequestScoped ou ViewScoped para configurar dados que devem ser exibidos no PDF.
 
 O primeiro parâmetro é uma instância de PDFConverterConfig. O segundo é a página de destino. Exemplo:
 
     PDFConverterConfig config = new DefaultPDFConverterConfig();
     config.setFileName("meuarquivo.pdf");
     config.setPreloadResources(true);
-    byte[] output = FaceletsConverter.renderFaceletAsPDF(config, paginaDestino);
-
-## Mostrando um PDF diretamente ao usuário
-
-Caso você queira que uma página específica seja mostrada ao usuário, primeiro,
-faça o @Inject de um objeto PDFConverterConfig na sua classe:
-
-    @Inject
-    private PDFConverterConfig pdfConverterConfig;
-
-Depois, adicione a seguinte linha pouco antes do return da action:
-
-    pdfConverterConfig.setEnablePdf(true);
-
-Por exemplo:
-
-    public String gerarRelatorio() {
-        pdfConverterConfig.setEnablePdf(true);
-        return "relatorio";
-    }
-
-No exemplo abaixo, a página resultante do retorno da action será transformada em PDF
-e mostrada ao usuário como um arquivo com nome "relatorio.pdf":
-
-    public String gerarRelatorio() {
-        pdfConverterConfig.setEnablePdf(true);
-        pdfConverterConfig.setFileName("relatorio.pdf");
-        return "relatorio";
-    }
-
-É importante lembrar que as actions que geram PDF **não podem ser AJAX**. Por exemplo, esta action
-não pode ser usada:
-
-    <p:commandButton action="#{meuMB.gerarRelatorio}" value="Gerar Relatório" />
-
-Você precisa colocar ajax="false":
-
-    <p:commandButton ajax="false" action="#{meuMB.gerarRelatorio}" value="Gerar Relatório" />
-
-
-## Gerando um PDF e repassando-o a outro método
-
-
-Caso você queira, por exemplo, gerar o PDF de uma página e enviá-la via e-mail, 
-pode configurar o listener para que ele gere o PDF e repasse os bytes gerados
-para uma segunda action:
-
-    public String gerarRelatorioEmail() {
-        pdfConverterConfig.setEnablePdf(true);
-        pdfConverterConfig.setFileName("relatorio.pdf");
-        pdfConverterConfig.setPdfAction("#{meuRelatorioMB.enviarEmailRelatorio}");
-        return "relatorio";
-    }
-
-    public String enviarEmailRelatorio(byte[] bytesPDFRelatorio) {
-        // Sua função para manipular o PDF aqui
-        return "pagina_resultado";
-    }
-
-Neste caso, a página resultante da action gerarRelatorioEmail é transformada em PDF.
-Os bytes do PDF são repassados à action enviarEmailRelatorio, e o que o usuário
-verá no final é o resultado da última action.
-
+    byte[] output = FaceletsConverter.renderFaceletAsPDF(config, "minhapagina.xhtml");
 
 ## Problemas ao carregar imagens, CSS, etc
 
@@ -131,10 +64,8 @@ Dessa maneira, a imagem será carregada no listener JSF. Isso é necessário cas
  * Problemas ao carregar arquivos de servidor HTTPS
  * Recursos que estiverem em um local com acesso restrito (login necessário)
 
-A partir da versão 1.1.14, o componente irá precarregar automaticamente as imagens e
-stylesheets se for detectada uma conexão HTTPS.
-
-A partir da versão 1.1.16, você pode forçar o pré-carregamento de imagens e CSS passando o
+O componente irá precarregar automaticamente as imagens e stylesheets se for detectada uma
+conexão HTTPS. Além disso, você pode forçar o pré-carregamento de imagens e CSS passando o
 atributo de request "preload_resources":
 
     public String gerarRelatorioEmail() {
@@ -148,7 +79,7 @@ atributo de request "preload_resources":
 
 ## Problemas de codificação
 
-A partir da versão 1.1.17, a codificação é passada para o Tidy, evitando problemas de acentuação. 
+A partir da versão 1.1.17, a codificação é passada para o JSoup, evitando problemas de acentuação.
 
 Caso mesmo assim você tenha problemas de codificação, pode informar manualmente a codificação do
 PDF gerado:
@@ -161,27 +92,15 @@ PDF gerado:
         return "relatorio";
     }
 
-
-## Configurando a geração de PDF
-
-
-A partir da versão 1.2.4, a configuração da conversão de PDF utiliza a injeção
-de dependência do JavaEE. Se você quiser criar uma classe diferente para
-configurar a geração de PDF, basta criar uma nova classe implementando a
-interface PDFConverterConfig e especificar no beans.xml que você utilizará
-essa classe.
-
-
 ## FAQ
 
 
 ### A página é mostrada diretamente na tela, não está sendo gerado o PDF!
 
-* Verifique se você não está usando AJAX - a geração de PDF através de AJAX
-não funciona.
 * Tome cuidado com as seguintes propriedades CSS, elas podem causar problemas!
   * float
   * position: fixed
+* Verifique possíveis exceções no log da aplicação.
 
 ### O PDF demora demais para ser gerado!
 
@@ -190,15 +109,7 @@ das dimensões dos objetos seja feito corretamente para a geração do PDF. Reti
 as propriedades float, de preferência utilizando um CSS específico para
 impressão.
 
-### CSS e Imagens não estão sendo carregados, o que fazer?
-
-* Se imagens e CSS estiverem em uma URL que depende de login para estar
- acessível, configure a propriedade preloadResources para que os recursos
- sejam carregados durante o PhaseListener.
-* Tente utilizar URLs absolutas para os recursos.
-* Tente utilizar URLS públicas.
-
-### Como eu inclui cabeçalhos e rodapés na página?
+### Como eu incluo cabeçalhos e rodapés na página?
 
 O FlyingSaucer suporta atributos CSS3 para inclusão de cabeçalhos, rodapés e
 afins. Confira em [http://www.w3.org/TR/css3-gcpm/](http://www.w3.org/TR/css3-gcpm/).

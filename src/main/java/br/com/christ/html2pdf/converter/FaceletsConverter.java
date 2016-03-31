@@ -4,7 +4,9 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.christ.html2pdf.exception.ConversionException;
+import br.com.christ.html2pdf.loader.FacesHttpStreamFactory;
 import br.com.christ.html2pdf.renderer.FaceletRenderer;
+import br.com.christ.html2pdf.utils.FacesUtils;
 import br.com.christ.jsf.html2pdf.listener.PDFConverterConfig;
 
 public class FaceletsConverter {
@@ -22,10 +24,13 @@ public class FaceletsConverter {
 		FaceletRenderer renderer = new FaceletRenderer(FacesContext.getCurrentInstance());
 		String content = renderer.renderView(viewId);
 		PDFConverterContext converterContext = new PDFConverterContext(config);
-		converterContext.setUrl("");
+		converterContext.setUrl(FacesUtils.getBaseFacesURL());
 		converterContext.setHtmlContent(content);
+		converterContext.setHttpStreamFactory(new FacesHttpStreamFactory());
 		byte[] bytesPdf;
 		bytesPdf = Html2PDFConverter.convertHtmlToPDF(converterContext);
 		return bytesPdf;
 	}
+
+
 }

@@ -1,32 +1,26 @@
 package br.com.christ.html2pdf.factory;
 
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import org.w3c.dom.Element;
-import org.xhtmlrenderer.extend.FSImage;
-import org.xhtmlrenderer.extend.ReplacedElement;
-import org.xhtmlrenderer.extend.ReplacedElementFactory;
-import org.xhtmlrenderer.extend.UserAgentCallback;
-import org.xhtmlrenderer.layout.LayoutContext;
-import org.xhtmlrenderer.pdf.ITextFSImage;
-import org.xhtmlrenderer.pdf.ITextImageElement;
-import org.xhtmlrenderer.render.BlockBox;
-import org.xhtmlrenderer.simple.extend.FormSubmissionListener;
 
 import br.com.christ.html2pdf.loader.FacesResourceLoader;
 import br.com.christ.html2pdf.loader.ResourceLoader;
-import com.lowagie.text.BadElementException;
-import com.lowagie.text.Image;
-import com.lowagie.text.Jpeg;
-import com.lowagie.text.pdf.codec.Base64;
+import com.openhtmltopdf.extend.FSImage;
+import com.openhtmltopdf.extend.ReplacedElement;
+import com.openhtmltopdf.extend.ReplacedElementFactory;
+import com.openhtmltopdf.extend.UserAgentCallback;
+import com.openhtmltopdf.layout.LayoutContext;
+import com.openhtmltopdf.pdfboxout.PdfBoxImage;
+import com.openhtmltopdf.pdfboxout.PdfBoxImageElement;
+import com.openhtmltopdf.render.BlockBox;
+import com.openhtmltopdf.simple.extend.FormSubmissionListener;
+import org.apache.commons.codec.binary.Base64;
 import sun.misc.BASE64Decoder;
-
 
 public class B64OrPreloadedReplacedElementFactory implements ReplacedElementFactory {
 
@@ -34,7 +28,9 @@ public class B64OrPreloadedReplacedElementFactory implements ReplacedElementFact
 			"EwAACxMBAJqcGAAAAAd0SU1FB98EBg0LFXmmUzUAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRo\n"+
 			"IEdJTVBXgQ4XAAAADElEQVQI12P4//8/AAX+Av7czFnnAAAAAElFTkSuQmCC\n";
 
-	private Image emptyImage;
+
+	private java.awt.Image emptyImage;
+	private FSImage pdfBoxEmptyImage;
 
 	private LinkedHashMap<String, ReplacedElement> elementCache;
 
@@ -44,12 +40,15 @@ public class B64OrPreloadedReplacedElementFactory implements ReplacedElementFact
 		super();
 		setResourceLoader(new FacesResourceLoader());
 		elementCache = new LinkedHashMap<String, ReplacedElement>();
-		BASE64Decoder decoder = new BASE64Decoder();
+
 		try {
-			emptyImage = Image.getInstance(decoder.decodeBuffer(EMPTY_IMAGE_CONTENT));
+			byte[] emptyImageBytes = Base64.decodeBase64(EMPTY_IMAGE_CONTENT);
+			emptyImage = ImageIO.read(new ByteArrayInputStream(emptyImageBytes));
+			pdfBoxEmptyImage = new PdfBoxImage(emptyImageBytes, "");
 		} catch (Exception e) {
 			throw new RuntimeException("Erro durante a geração do PDF");
 		}
+
 	}
 
 	public B64OrPreloadedReplacedElementFactory(ResourceLoader resourceLoader) {
@@ -73,9 +72,6 @@ public class B64OrPreloadedReplacedElementFactory implements ReplacedElementFact
 				FSImage fsImage;
 				try {
 					fsImage = buildImage(srcAttribute, uac);
-				} catch (BadElementException e1) {
-					e1.printStackTrace();
-					fsImage = null;
 				} catch (IOException e1) {
 					fsImage = null;
 					e1.printStackTrace();
@@ -84,7 +80,7 @@ public class B64OrPreloadedReplacedElementFactory implements ReplacedElementFact
 					if (cssWidth != -1 || cssHeight != -1) {
 						fsImage.scale(cssWidth, cssHeight);
 					}
-					imgElement = new ITextImageElement(fsImage);
+					imgElement = new PdfBoxImageElement(fsImage);
 				}
 			}
 			elementCache.put(srcAttribute, imgElement);
@@ -93,24 +89,24 @@ public class B64OrPreloadedReplacedElementFactory implements ReplacedElementFact
 		return imgElement;
 	}
 
-	protected FSImage buildImage(String srcAttr, UserAgentCallback uac) throws BadElementException, IOException {
+	protected FSImage buildImage(String srcAttr, UserAgentCallback uac) throws IOException {
 		FSImage fsImage;
 		try {
 			if (srcAttr.startsWith("preload:")) {
 				String preloadSrc = srcAttr.substring("preload:".length());
-				fsImage = new ITextFSImage(Image.getInstance(getResourceLoader().getBytesFromReference(preloadSrc)));
+				fsImage = new PdfBoxImage(getResourceLoader().getBytesFromReference(preloadSrc), srcAttr);
 			} else if (srcAttr.startsWith("data:image/")) {
 				String b64encoded = srcAttr.substring(srcAttr.indexOf("base64,") + "base64,".length(), srcAttr.length());
-				byte[] decodedBytes = Base64.decode(b64encoded);
+				byte[] decodedBytes = new BASE64Decoder().decodeBuffer(b64encoded);
 
-				fsImage = new ITextFSImage(Image.getInstance(decodedBytes));
+				fsImage = new PdfBoxImage(decodedBytes, srcAttr);
 			} else if (preloadAllImages) {
-				fsImage = new ITextFSImage(Image.getInstance(getResourceLoader().getBytesFromReference(srcAttr)));
+				fsImage = new PdfBoxImage(getResourceLoader().getBytesFromReference(srcAttr), srcAttr);
 			} else {
 				fsImage = uac.getImageResource(srcAttr).getImage();
 			}
 		} catch(Exception exc) {
-			fsImage = new ITextFSImage(emptyImage);
+			fsImage = pdfBoxEmptyImage;
 		}
 		return fsImage;
 	}

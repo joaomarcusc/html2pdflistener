@@ -8,9 +8,11 @@ import javax.faces.bean.RequestScoped;
 import br.com.christ.html2pdf.loader.FacesResourceLoader;
 import br.com.christ.html2pdf.loader.ResourceLoader;
 import br.com.christ.jsf.html2pdf.listener.PDFConverterConfig;
+import com.openhtmltopdf.extend.HttpStreamFactory;
 
 @RequestScoped
 public class PDFConverterContext {
+	private HttpStreamFactory streamFactory;
     private List<ConversionListener> listeners;
 	private ResourceLoader resourceLoader;
 	private boolean preloadResources;
@@ -35,6 +37,7 @@ public class PDFConverterContext {
 		this.setResourceLoader(new FacesResourceLoader());
 		this.setInputEncoding(config.getEncoding());
 		this.setRemoveStyles(config.isRemoveStyles());
+		this.setHttpStreamFactory(config.getHttpStreamFactory());
 	}
 
 	public boolean isPreloadResources() {
@@ -93,4 +96,11 @@ public class PDFConverterContext {
         this.removeStyles = removeStyles;
     }
 
+	public HttpStreamFactory getHttpStreamFactory() {
+		return streamFactory;
+	}
+
+	public void setHttpStreamFactory(final HttpStreamFactory streamFactory) {
+		this.streamFactory = streamFactory;
+	}
 }

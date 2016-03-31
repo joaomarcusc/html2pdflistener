@@ -11,10 +11,12 @@ import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Default;
 
 import br.com.christ.html2pdf.converter.ConversionListener;
+import com.openhtmltopdf.extend.HttpStreamFactory;
 
 @Default
 @RequestScoped
 public class DefaultPDFConverterConfig implements PDFConverterConfig {
+    private HttpStreamFactory streamFactory;
     private List<ConversionListener> listeners = new LinkedList<ConversionListener>();
     private Map<String, Object> parameters = new HashMap<String, Object>();
     private boolean preloadResources = false;
@@ -114,5 +116,14 @@ public class DefaultPDFConverterConfig implements PDFConverterConfig {
     @Override
     public void setRemoveStyles(boolean removeStyles) {
         this.removeStyles = removeStyles;
+    }
+
+    @Override
+    public HttpStreamFactory getHttpStreamFactory() {
+        return streamFactory;
+    }
+
+    public void setHttpStreamFactory(final HttpStreamFactory streamFactory) {
+        this.streamFactory = streamFactory;
     }
 }

@@ -5,8 +5,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import br.com.christ.html2pdf.converter.ConversionListener;
+import com.openhtmltopdf.extend.HttpStreamFactory;
 
 public interface PDFConverterConfig extends Serializable {
+	public HttpStreamFactory getHttpStreamFactory();
+
     public List<ConversionListener> getListeners();
 
 	public void addListener(ConversionListener listener);
