@@ -8,17 +8,16 @@ import br.com.christ.html2pdf.loader.ResourceLoader;
 
 public class Html2PDFConverter {
 
-	public static byte[] convertHtmlToPDF(String htmlContent, String url, String encoding, boolean preloadResources, ResourceLoader resourceLoader) throws ConversionException {
-		return convertHtmlToPDF(htmlContent, url, encoding, false, resourceLoader, Arrays.asList(new ConversionListener[]{}));
+	public static byte[] convertHtmlToPDF(String htmlContent, String url, String encoding, boolean preloadResources) throws ConversionException {
+		return convertHtmlToPDF(htmlContent, url, encoding, false, Arrays.asList(new ConversionListener[]{}));
 	}
 
-	public static byte[] convertHtmlToPDF(String htmlContent, String url, String encoding, boolean preloadResources, ResourceLoader resourceLoader, List<ConversionListener> listeners) throws ConversionException {
+	public static byte[] convertHtmlToPDF(String htmlContent, String url, String encoding, boolean preloadResources, List<ConversionListener> listeners) throws ConversionException {
 		PDFConverterContext context = new PDFConverterContext();
 		context.setListeners(listeners);
 		context.setHtmlContent(htmlContent);
 		context.setUrl(url);
 		context.setPreloadResources(preloadResources);
-		context.setResourceLoader(resourceLoader);
 		context.setInputEncoding(encoding);
 		Converter converter = new Converter();
 		return converter.convertHtmlToPDF(context);

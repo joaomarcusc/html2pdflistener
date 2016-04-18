@@ -87,7 +87,6 @@ public class Html2PDFPhaseListener implements PhaseListener {
 			context.setHtmlContent(htmlContent);
 			context.setUrl(newUrl.toString());
 			context.setPreloadResources(preloadResources);
-			context.setResourceLoader(new FacesResourceLoader());
 			context.setInputEncoding(encoding);
 			context.setRemoveStyles(config.isRemoveStyles());
 			Converter converter = new Converter();

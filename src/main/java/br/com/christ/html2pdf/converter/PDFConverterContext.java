@@ -34,7 +34,6 @@ public class PDFConverterContext {
 	public PDFConverterContext(PDFConverterConfig config) {
 		this.setListeners(config.getListeners());
 		this.setPreloadResources(config.isPreloadResources());
-		this.setResourceLoader(new FacesResourceLoader());
 		this.setInputEncoding(config.getEncoding());
 		this.setRemoveStyles(config.isRemoveStyles());
 		this.setHttpStreamFactory(config.getHttpStreamFactory());
@@ -54,14 +53,6 @@ public class PDFConverterContext {
 
 	public void setUrl(String url) {
 		this.url = url;
-	}
-
-	public ResourceLoader getResourceLoader() {
-		return resourceLoader;
-	}
-
-	public void setResourceLoader(ResourceLoader resourceLoader) {
-		this.resourceLoader = resourceLoader;
 	}
 
 	public String getInputEncoding() {

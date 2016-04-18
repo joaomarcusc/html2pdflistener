@@ -2,163 +2,172 @@ package br.com.christ.jsf.html2pdf.listener;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Locale;
 
 public class ResponseCatcher implements HttpServletResponse {
-
-    CharArrayWriter output;
-
-    PrintWriter writer;
-
-    HttpServletResponse response;
+    private HttpServletResponse delegate;
+    private StringWriter stringWriter;
+    private PrintWriter printWriter;
 
     public ResponseCatcher(HttpServletResponse response) {
-        this.response = response;
-        output = new CharArrayWriter();
-        writer = new PrintWriter(output, true);
+        this.delegate = response;
+        this.stringWriter = new StringWriter();
+        this.printWriter = new PrintWriter(this.stringWriter);
     }
 
-    public PrintWriter getWriter() {
-        return writer;
+    @Override public void addCookie(final Cookie cookie) {
+        delegate.addCookie(cookie);
     }
 
-    public void setCharacterEncoding(String charset) {
-        response.setCharacterEncoding(charset);
+    @Override public void addDateHeader(final String s, final long l) {
+        delegate.addDateHeader(s, l);
     }
 
-    public void flushBuffer() throws IOException {
-        writer.flush();
+    @Override public void addHeader(final String s, final String s1) {
+        delegate.addHeader(s, s1);
     }
 
-    public boolean isCommitted() {
-        return false;
+    @Override public void addIntHeader(final String s, final int i) {
+        delegate.addIntHeader(s, i);
     }
 
-    public boolean containsHeader(String arg0) {
-        return false;
+    @Override public boolean containsHeader(final String s) {
+        return delegate.containsHeader(s);
     }
 
-    public String encodeURL(String arg0) {
-        return response.encodeURL(arg0);
+    @Override public String encodeRedirectURL(final String s) {
+        return delegate.encodeRedirectURL(s);
     }
 
-    public String encodeRedirectURL(String arg0) {
-        return response.encodeRedirectURL(arg0);
+    @Override public String encodeRedirectUrl(final String s) {
+        return delegate.encodeRedirectUrl(s);
     }
 
-    public String encodeUrl(String arg0) {
-        return response.encodeUrl(arg0);
+    @Override public String encodeURL(final String s) {
+        return delegate.encodeURL(s);
     }
 
-    public String encodeRedirectUrl(String arg0) {
-        return response.encodeRedirectUrl(arg0);
+    @Override public String encodeUrl(final String s) {
+        return delegate.encodeUrl(s);
     }
 
-    public String getCharacterEncoding() {
-        return response.getCharacterEncoding();
+    @Override public String getHeader(final String s) {
+        return delegate.getHeader(s);
     }
 
-    public String getContentType() {
-        return response.getContentType();
+    @Override public Collection<String> getHeaderNames() {
+        return delegate.getHeaderNames();
     }
 
-    public int getBufferSize() {
-        return response.getBufferSize();
+    @Override public Collection<String> getHeaders(final String s) {
+        return delegate.getHeaders(s);
     }
 
-    public Locale getLocale() {
-        return response.getLocale();
+    @Override public int getStatus() {
+        return delegate.getStatus();
     }
 
-    public void sendError(int arg0, String arg1) throws IOException {
-        response.sendError(arg0, arg1);
+    @Override public void sendError(final int i) throws IOException {
+        delegate.sendError(i);
     }
 
-    public void sendError(int arg0) throws IOException {
-        response.sendError(arg0);
+    @Override public void sendError(final int i, final String s) throws IOException {
+        delegate.sendError(i, s);
     }
 
-    public void sendRedirect(String arg0) throws IOException {
-        response.sendRedirect(arg0);
+    @Override public void sendRedirect(final String s) throws IOException {
+        delegate.sendRedirect(s);
     }
 
-    public void addCookie(Cookie arg0) {
-        response.addCookie(arg0);
+    @Override public void setDateHeader(final String s, final long l) {
+        delegate.setDateHeader(s, l);
     }
 
-    public void setDateHeader(String arg0, long arg1) {
-        response.setDateHeader(arg0, arg1);
+    @Override public void setHeader(final String s, final String s1) {
+        delegate.setHeader(s, s1);
     }
 
-    public void addDateHeader(String arg0, long arg1) {
-        response.addDateHeader(arg0, arg1);
+    @Override public void setIntHeader(final String s, final int i) {
+        delegate.setIntHeader(s, i);
     }
 
-    public void setHeader(String arg0, String arg1) {
-        response.setHeader(arg0, arg1);
+    @Override public void setStatus(final int i) {
+        delegate.setStatus(i);
     }
 
-    public void addHeader(String arg0, String arg1) {
-        response.addHeader(arg0, arg1);
+    @Override public void setStatus(final int i, final String s) {
+        delegate.setStatus(i, s);
     }
 
-    public void setIntHeader(String arg0, int arg1) {
-        response.setIntHeader(arg0, arg1);
+    @Override public void flushBuffer() throws IOException {
+        delegate.flushBuffer();
     }
 
-    public void addIntHeader(String arg0, int arg1) {
-        response.addIntHeader(arg0, arg1);
+    @Override public int getBufferSize() {
+        return delegate.getBufferSize();
     }
 
-    public void setContentLength(int arg0) {
-        response.setContentLength(arg0);
+    @Override public String getCharacterEncoding() {
+        return delegate.getCharacterEncoding();
     }
 
-    public void setContentType(String arg0) {
-        response.setContentType(arg0);
+    @Override public String getContentType() {
+        return delegate.getContentType();
     }
 
-    /* null ops */
-    public void setStatus(int arg0) {}
-    public void setStatus(int arg0, String arg1) {}
-
-    @Override
-    public int getStatus() {
-        return 0;
+    @Override public Locale getLocale() {
+        return delegate.getLocale();
     }
 
-    @Override
-    public String getHeader(String s) {
-        return null;
+    @Override public ServletOutputStream getOutputStream() throws IOException {
+        return delegate.getOutputStream();
     }
 
-    @Override
-    public Collection<String> getHeaders(String s) {
-        return null;
+    @Override public PrintWriter getWriter() throws IOException {
+        return printWriter;
     }
 
-    @Override
-    public Collection<String> getHeaderNames() {
-        return null;
+    @Override public boolean isCommitted() {
+        return delegate.isCommitted();
     }
 
-    public void setBufferSize(int arg0) {}
-    public void resetBuffer() {}
-    public void reset() {}
-    public void setLocale(Locale arg0) {}
-
-
-    public ServletOutputStream getOutputStream() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    @Override public void reset() {
+        delegate.reset();
     }
 
-    @Override
-    public String toString() {
-        return output.toString();
+    @Override public void resetBuffer() {
+        delegate.resetBuffer();
+    }
+
+    @Override public void setBufferSize(final int i) {
+        delegate.setBufferSize(i);
+    }
+
+    @Override public void setCharacterEncoding(final String s) {
+        delegate.setCharacterEncoding(s);
+    }
+
+    @Override public void setContentLength(final int i) {
+        delegate.setContentLength(i);
+    }
+
+    @Override public void setContentType(final String s) {
+        delegate.setContentType(s);
+    }
+
+    @Override public void setLocale(final Locale locale) {
+        delegate.setLocale(locale);
+    }
+
+    public String getHtmlString() {
+        return stringWriter.toString();
     }
 }
+

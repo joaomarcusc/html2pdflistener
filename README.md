@@ -30,7 +30,7 @@ Depois, adicione a dependência no seu pom.xml
     <dependency>
         <groupId>br.com.christ.jsf</groupId>
         <artifactId>html2pdflistener</artifactId>
-        <version>2.0.0-BETA1</version>
+        <version>2.0.0-BETA2</version>
     </dependency>
 
 ## Renderizando um template .xhtml para PDF

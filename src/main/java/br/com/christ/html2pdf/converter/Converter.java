@@ -154,7 +154,7 @@ public class Converter {
 			if (context.isRemoveStyles())
 				removeStylesheets(xhtmlContent);
 			if (context.isPreloadResources()) {
-				preloadStylesheets(context.getResourceLoader(), xhtmlContent);
+//				preloadStylesheets(context.getResourceLoader(), xhtmlContent);
 			}
 			for (ConversionListener listener : listeners) {
 				listener.beforeConvert(context);

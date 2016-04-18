@@ -1,3 +1,10 @@
+2.0.0-BETA2: 2016-04-15
+* Ao se chamar o FaceletRenderer mais de uma vez, os CSS referenciados
+  na primeira vez não eram mais carregados nas vezes subsequentes. Corrigido.
+
+2.0.0-BETA1: 2016-04-01
+* Trocado o flyingsaucer pelo OpenHtmlToPdf, para permitir usar o PDFBox.
+
 1.5.11: 2015-04-06
 * Se uma imagem não for encontrada, usar uma imagem padrão (por enquanto,
 fixo como um PNG de 1x1)
