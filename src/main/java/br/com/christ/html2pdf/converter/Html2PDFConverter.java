@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import br.com.christ.html2pdf.exception.ConversionException;
+import br.com.christ.html2pdf.loader.FacesHttpStreamFactory;
 import br.com.christ.html2pdf.loader.ResourceLoader;
 
 public class Html2PDFConverter {

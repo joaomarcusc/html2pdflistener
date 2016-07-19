@@ -1,9 +1,13 @@
-2.0.0-BETA2: 2016-04-15
-* Ao se chamar o FaceletRenderer mais de uma vez, os CSS referenciados
-  na primeira vez não eram mais carregados nas vezes subsequentes. Corrigido.
+2.0.0-BETA3:
+* Usar versão SNAPSHOT do openhtmltopdf que contém uma correção para textos
+justificados (text-align do CSS). Ver issue #3 do Github danfickle/openhtmltopdf
 
-2.0.0-BETA1: 2016-04-01
-* Trocado o flyingsaucer pelo OpenHtmlToPdf, para permitir usar o PDFBox.
+2.0.0-BETA2:
+* Ao chamar o renderizador JSF mais de uma vez, os arquivos CSS não estavam sendo
+carregados novamente. Corrigido.
+
+2.0.0-BETA1:
+* Migrar para o openhtmltopdf, que usa o PDFBox ao invés do iText
 
 1.5.11: 2015-04-06
 * Se uma imagem não for encontrada, usar uma imagem padrão (por enquanto,

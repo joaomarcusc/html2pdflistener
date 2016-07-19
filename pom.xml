@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>br.com.christ.jsf</groupId>
     <artifactId>html2pdflistener</artifactId>
-    <version>2.0.0-BETA2</version>
+    <version>2.0.0-BETA3</version>
 
     <properties>
-        <openhtml.version>0.0.1-RC2</openhtml.version>
+        <openhtml.version>0.0.1-RC5-SNAPSHOT</openhtml.version>
     </properties>
 
     <dependencies>
@@ -55,9 +55,9 @@
             <version>${openhtml.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.openhtmltopdf</groupId>
-            <artifactId>openhtmltopdf-jsoup-dom-converter</artifactId>
-            <version>${openhtml.version}</version>
+            <groupId>org.primefaces</groupId>
+            <artifactId>primefaces</artifactId>
+            <version>5.2</version>
         </dependency>
     </dependencies>
     <build>
@@ -75,10 +75,11 @@
 
     <repositories>
         <repository>
-            <id>maven</id>
-            <name>Maven Central</name>
-            <url>https://repo1.maven.org/maven2/</url>
+            <id>nexus</id>
+            <name>Public Proxy</name>
+            <url>http://nexus.aic.serpro/content/groups/public/</url>
         </repository>
+
         <repository>
             <id>bintray</id>
             <name>Bintray Server</name>
@@ -87,12 +88,14 @@
     </repositories>
     <distributionManagement>
         <repository>
-            <id>gh-pages</id>
-            <url>file:///${basedir}/../html2pdflistener-repo/repository/</url>
+            <id>nexus</id>
+            <name>Internal Releases</name>
+            <url>http://nexus.aic.serpro/content/repositories/releases/</url>
         </repository>
         <snapshotRepository>
-            <id>gh-pages</id>
-            <url>file:///${basedir}/../html2pdflistener-repo/repository/</url>
+            <id>nexus</id>
+            <name>Internal Snapshots</name>
+            <url>http://nexus.aic.serpro/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 </project>
